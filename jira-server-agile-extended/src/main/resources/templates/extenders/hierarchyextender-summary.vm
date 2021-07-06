@@ -1,0 +1,10 @@
+#* @vtlvariable name="i18n" type="com.atlassian.jira.util.I18nHelper" *#
+#* @vtlvariable name="rawParameters" type="java.util.Map" *#
+#* @vtlvariable name="sameProject" type="java.lang.Boolean" *#
+
+## Summary must be one line. Avoid excessive HTML.
+
+$i18n.getText("hierarchyextender.summary")
+#if($!sameProject)
+    $i18n.getText("hierarchyextender.summary.sameProject")
+#end

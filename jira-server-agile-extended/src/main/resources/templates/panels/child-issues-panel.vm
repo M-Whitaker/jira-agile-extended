@@ -1,0 +1,38 @@
+#* @vtlvariable name="link" type="com.atlassian.jira.issue.link.IssueLink" *#
+#* @vtlvariable name="baseUrl" type="java.lang.String" *#
+#* @vtlvariable name="linkType" type="uk.co.mattwhitaker.atlassian.jiraserveragileextended.model.LinkType" *#
+
+#foreach( $linkType in $linkTypes )
+<div class="mod-content">
+  <div class="links-container" data-default-link-icon="/jira/images/icons/generic_link_16.png"
+       resolved="">
+    <dl class="links-list">
+      <dt title="$linkType.name">$linkType.name</dt>
+        #foreach( $issue in $linkType.issues)
+          <dd id="internal-$link.getId()">
+            <div class="link-content">
+              <p>
+                <img src="$baseUrl$issue.getIssueType().getIconUrl()"
+                     title="$issue.getIssueType().getDescription()"
+                     alt="$issue.getIssueType().getDescription()" width="16" height="16">
+                <span title="$issue.key: $issue.getSummary()">
+                                <a href="/jira/browse/$issue.key" data-issue-key="$issue.key"
+                                   class="issue-link link-title">$issue.key</a>
+                                <span class="link-summary">$issue.getSummary()</span>
+                            </span>
+              </p>
+              <ul class="link-snapshot">
+                  ##                            <li class="priority">
+##                                <img src="/jira/images/icons/priorities/medium.svg" title="Medium - Has the potential to affect progress." alt="Medium - Has the potential to affect progress." width="16" height="16">
+##                            </li>
+##                            <li class="status">
+##                                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-blue-gray jira-issue-status-lozenge-new aui-lozenge-subtle jira-issue-status-lozenge-max-width-short" data-tooltip="<span class=&quot;jira-issue-status-tooltip-title&quot;>$issue.getStatus().getName()</span>" original-title="">$issue.getStatus().getName()</span>
+##                            </li>
+##                        </ul>
+            </div>
+          </dd>
+        #end
+    </dl>
+  </div>
+</div>
+#end

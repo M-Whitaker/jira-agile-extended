@@ -1,0 +1,24 @@
+$webResourceManager.requireResource("com.atlassian.auiplugin:aui-forms")
+$webResourceManager.requireResource("com.atlassian.auiplugin:aui-message")
+#customControlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters $auiparams)
+#if ($jiraUserUtils.getGroupNamesForUser($authcontext.loggedInUser.name).contains(
+    'jira-administrators'))
+<input class="text long-field" type="text"
+       name="$customField.id"
+       value="$!value"/>
+#else
+    #if($value && ! $value.equals(""))
+        #set ($displayValue = ${value})
+    #else
+        #set ($displayValue = 'N/A')
+    #end
+<div class="aui-message aui-message-warning">
+  <p class="title">
+    <strong>This field is editable only by JIRA administrators</strong>
+  </p>
+</div>
+<input type="hidden"
+       name="$customField.id"
+       value="$!value"/>
+#end
+#customControlFooter ($action $customField.id $fieldLayoutItem.fieldDescription $displayParameters $auiparams)

@@ -1,0 +1,14 @@
+#* @vtlvariable name="field" type="uk.co.mattwhitaker.atlassian.jiraserveragileextended.model.Field" *#
+
+<div class="item-details">
+    #foreach( $field in $fields )
+      <dl>
+        <dt>$field.name:</dt>
+        <dd>
+                <span class="view-issue-field">
+                    $field.value
+                </span>
+        </dd>
+      </dl>
+    #end
+</div>

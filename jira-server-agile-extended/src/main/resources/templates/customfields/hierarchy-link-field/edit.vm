@@ -1,0 +1,66 @@
+#disable_html_escaping()
+#customControlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters $auiparams)
+<head>
+    $webResourceManager.requireResource(
+        "uk.co.mattwhitaker.jira.jira-server-agile-extended:jira-server-agile-extended-hierarchy-link-field-resources")
+</head>
+<input class="text long-field" id="$customField.id" name="$customField.id" type="text"/>
+<script type="text/javascript">
+  AJS.$("#$customField.id").auiSelect2({
+    placeholder: 'Please select an issue',
+    allowClear: true,
+    escapeMarkup: function(markup) {
+      return markup;
+    },
+    ajax: {
+      url: '$requestContext.baseUrl/rest/api/2/search',
+      type: 'POST',
+      dataType: 'json',
+      params: { // extra parameters that will be passed to ajax
+        contentType: 'application/json; charset=utf-8',
+      },
+      delay: 250,
+      data: function(term, page) {
+        let jqlQueryString = 'project = TEST ';
+        let match;
+        if (term === '') {
+
+        } else if ((match = term.toUpperCase().match(/((([A-Z]{1,10})-?)[A-Z]+-\d+)/g))) {
+          jqlQueryString += 'AND key = ' + match[0].toUpperCase();
+        } else {
+          jqlQueryString += 'AND summary ~ \'' + term + '\'';
+        }
+        const body = {
+          jql: jqlQueryString,
+          validateQuery: false,
+          maxResults: 50,
+        };
+
+        return JSON.stringify(body);
+      },
+      results: function(data, page) {
+        var issues = [{id: '', text: ''}];
+        page = page || 0;
+
+        data.issues.forEach(destIssue => {
+          issues.push({
+            id: destIssue.key,
+            text: `<span> <img src="${destIssue.fields.issuetype.iconUrl}" alt="${destIssue.fields.issuetype.description}"> ${destIssue.key} ${destIssue.fields.summary}</span>`,
+          });
+        });
+        return {
+          results: issues,
+          // pagination: {
+          //     more: (page * 50) < data.total
+          // }
+        };
+      },
+    },
+  });
+      #if ($value)
+      AJS.$("#$customField.id").
+      auiSelect2('data', {id: "$!value", text: "$!value $destinationIssueSummary"});
+      AJS.$("#$customField.id").auiSelect2('search', "$!value $destinationIssueSummary");
+      #end
+</script>
+#customControlFooter ($action $customField.id $fieldLayoutItem.fieldDescription $displayParameters $auiparams)

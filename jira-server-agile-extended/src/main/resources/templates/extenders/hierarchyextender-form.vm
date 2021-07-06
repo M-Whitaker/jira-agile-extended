@@ -1,0 +1,25 @@
+#* @vtlvariable name="action" type="com.atlassian.jira.web.action.JiraWebActionSupport" *#
+#* @vtlvariable name="i18n" type="com.atlassian.jira.util.I18nHelper" *#
+#* @vtlvariable name="module" type="uk.co.mattwhitaker.atlassian.jiraserveragileextended.structure.extenders.HierarchyExtender" *#
+#* @vtlvariable name="generatorId" type="java.lang.Long" *#
+#* @vtlvariable name="hierarchyLinkType" type="com.atlassian.jira.issue.link.IssueLinkType" *#
+
+## It is important to use some unique prefix for all element IDs to avoid collisions.
+#set($prefix = "f${generatorId}")
+
+## Follow Atlassian AUI rules for the forms
+<fieldset class="group">
+  <legend><span>$action.getText("hierarchyextender.type")</span></legend>
+  <div class="">
+    <select id="select2-hierarchyextender" name="hierarchyLinkTypes">
+        #foreach($hierarchyLinkType in $hierarchyLinkTypes)
+          <option id="$hierarchyLinkType.id">$hierarchyLinkType.name</option>
+        #end
+    </select>
+      ##        <label for="${prefix}-sameProject">$action.getText("hierarchyextender.limit.sameProject")</label>
+  </div>
+</fieldset>
+<script type="text/javascript">
+  AJS.$('#select2-hierarchyextender').auiSelect2();
+</script>
+

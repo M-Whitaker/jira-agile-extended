@@ -1,0 +1,12 @@
+#controlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters.noHeader)
+<aui-select
+    name="$customField.id"
+    placeholder="Select a product"
+>
+  <aui-option>HipChat</aui-option>
+  <aui-option>JIRA</aui-option>
+  <aui-option>Confluence</aui-option>
+  <aui-option>Stash</aui-option>
+  <aui-option>FeCru</aui-option>
+</aui-select>
+#controlFooter ($action $fieldLayoutItem.fieldDescription $displayParameters.noHeader)

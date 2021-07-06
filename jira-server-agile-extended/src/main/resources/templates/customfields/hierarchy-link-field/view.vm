@@ -1,0 +1,14 @@
+#* @vtlvariable name="requestContext" type="com.atlassian.jira.util.velocity.VelocityRequestContext" *#
+
+#disable_html_escaping()
+#if ($value)
+    #if (${displayParameters.excel_view} || ${displayParameters.escapeHtml})
+        $textutils.br($textutils.htmlEncode($!value.toString(), false))
+    #else
+    <span>
+            <img src="$destinationIssueIconUrl" alt="$destinationIssueIconDescription">
+            <a href="$requestContext.baseUrl/browse/$!value.toString()">$!value.toString()</a>
+        $destinationIssueSummary
+        </span>
+    #end
+#end
