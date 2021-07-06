@@ -16,7 +16,7 @@ import java.io.IOException;
 import static org.junit.Assert.*;
 
 
-public class AdminServletFuncTest {
+public class AdminServletFuncTrdTest {
 
     CloseableHttpClient httpClient;
     String baseUrl;

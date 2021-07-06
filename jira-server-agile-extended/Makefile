@@ -1,4 +1,10 @@
-.PHONY: jira
+.PHONY: jira test clean
 
 jira:
-	atlas-run --product jira
+	atlas-debug --product jira
+
+test:
+	atlas-integration-test --product jira
+
+clean:
+	atlas-clean

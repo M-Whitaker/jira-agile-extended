@@ -27,25 +27,12 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.13.1</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.felix</groupId>
-      <artifactId>org.apache.felix.framework</artifactId>
-      <version>4.0.0</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
       <artifactId>xstream</artifactId>
       <version>1.4.17</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.6.6</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -56,8 +43,7 @@
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.4</version>
+      <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -77,19 +63,11 @@
     <dependency>
       <groupId>com.atlassian.sal</groupId>
       <artifactId>sal-api</artifactId>
-      <version>4.2.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.atlassian.templaterenderer</groupId>
       <artifactId>atlassian-template-renderer-api</artifactId>
-      <version>2.1.0</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.atlassian.jira.plugins</groupId>
-      <artifactId>jira-greenhopper-plugin</artifactId>
-      <version>8.13.8</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -100,18 +78,6 @@
     </dependency>
 
     <!-- Spring Dependencies -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-      <version>5.0.10.RELEASE</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <version>5.0.10.RELEASE</version>
-      <scope>provided</scope>
-    </dependency>
     <dependency>
       <groupId>com.atlassian.plugin</groupId>
       <artifactId>atlassian-spring-scanner-annotation</artifactId>
@@ -124,6 +90,18 @@
       <version>1</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- WIRED TEST RUNNER DEPENDENCIES -->
     <dependency>
       <groupId>com.atlassian.plugins</groupId>
@@ -147,8 +125,33 @@
         <artifactId>jira-testkit-client</artifactId>
         <version>${testkit.version}</version>
         <scope>test</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>junit</groupId>
+            <artifactId>junit-dep</artifactId>
+          </exclusion>
+        </exclusions>
     </dependency>
   </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.atlassian.platform</groupId>
+        <artifactId>platform</artifactId>
+        <version>${platform.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.atlassian.platform</groupId>
+        <artifactId>third-party</artifactId>
+        <version>${platform.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <build>
     <plugins>
       <plugin>
@@ -184,28 +187,37 @@
           </products>
           <testGroups>
             <testGroup>
-              <id>jira-integration</id>
+              <id>jira-wired-integration</id>
               <productIds>
                 <productId>jira</productId>
               </productIds>
               <includes>
-                <include>it/**/*Test.java</include>
+                <include>it/**/*WiredTest.java</include>
+              </includes>
+            </testGroup>
+            <testGroup>
+              <id>jira-traditional-integration</id>
+              <productIds>
+                <productId>jira</productId>
+              </productIds>
+              <includes>
+                <include>it/**/*TrdTest.java</include>
               </includes>
             </testGroup>
           </testGroups>
           <pluginArtifacts>
-              <pluginArtifact>
-                  <groupId>com.atlassian.jira.tests</groupId>
-                  <artifactId>jira-testkit-plugin</artifactId>
-                  <version>${testkit.version}</version>
-              </pluginArtifact>
+            <pluginArtifact>
+                <groupId>com.atlassian.jira.tests</groupId>
+                <artifactId>jira-testkit-plugin</artifactId>
+                <version>${testkit.version}</version>
+            </pluginArtifact>
           </pluginArtifacts>
           <!-- See here for an explanation of default instructions: -->
           <!-- https://developer.atlassian.com/docs/advanced-topics/configuration-of-instructions-in-atlassian-plugins -->
           <instructions>
             <Atlassian-Plugin-Key>${atlassian.plugin.key}</Atlassian-Plugin-Key>
             <!-- Add package to export here -->
-            <Export-Package>uk.co.mattwhitaker.jira.jiraserveragileextended.api,</Export-Package>
+            <Export-Package>uk.co.mattwhitaker.atlassian.jiraserveragileextended.api,</Export-Package>
             <!-- Add package import here -->
             <Import-Package>
               org.springframework.osgi.*;resolution:="optional",
@@ -249,7 +261,7 @@
     <atlassian.spring.scanner.version>2.1.7</atlassian.spring.scanner.version>
     <!-- This property ensures consistency between the key in atlassian-plugin.xml and the OSGi bundle's key. -->
     <atlassian.plugin.key>${project.groupId}.${project.artifactId}</atlassian.plugin.key>
-    <!-- TestKit version 8.x for JIRA 8.x -->
+    <!-- TestKit version 8.1.x for JIRA 8.1.x -->
     <testkit.version>8.1.28</testkit.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>

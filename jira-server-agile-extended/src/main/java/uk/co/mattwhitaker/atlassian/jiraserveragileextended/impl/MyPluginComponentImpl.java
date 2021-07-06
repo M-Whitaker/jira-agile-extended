@@ -3,8 +3,8 @@ package uk.co.mattwhitaker.atlassian.jiraserveragileextended.impl;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.ApplicationProperties;
-import javax.inject.Inject;
 import javax.inject.Named;
+import org.springframework.beans.factory.annotation.Autowired;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.api.MyPluginComponent;
 
 @ExportAsService({MyPluginComponent.class})
@@ -14,7 +14,7 @@ public class MyPluginComponentImpl implements MyPluginComponent {
   @ComponentImport
   private final ApplicationProperties applicationProperties;
 
-  @Inject
+  @Autowired
   public MyPluginComponentImpl(final ApplicationProperties applicationProperties) {
     this.applicationProperties = applicationProperties;
   }

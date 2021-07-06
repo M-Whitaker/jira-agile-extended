@@ -23,6 +23,7 @@ public class MyComponentWiredTest
     @Test
     public void testMyName()
     {
+        System.out.println("Running wired test!!!");
         assertEquals("names do not match!", "myComponent:" + applicationProperties.getDisplayName(),myPluginComponent.getName());
     }
 }
