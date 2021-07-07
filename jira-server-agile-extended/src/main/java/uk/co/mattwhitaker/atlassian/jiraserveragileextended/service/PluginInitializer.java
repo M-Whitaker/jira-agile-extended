@@ -7,7 +7,6 @@ import com.atlassian.jira.issue.link.IssueLinkTypeManager;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import javax.inject.Inject;
 import javax.inject.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.customfield.HierarchyLinkField;
-import uk.co.mattwhitaker.atlassian.jiraserveragileextended.issuelink.HierarchyIssueLinkType;
 
 @ExportAsService({PluginInitializer.class})
 @Named("PluginInitializer")

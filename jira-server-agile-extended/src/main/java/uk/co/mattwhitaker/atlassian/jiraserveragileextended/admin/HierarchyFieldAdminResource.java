@@ -1,6 +1,7 @@
 package uk.co.mattwhitaker.atlassian.jiraserveragileextended.admin;
 
 
+import com.atlassian.greenhopper.api.issuetype.ManagedIssueTypesService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.IssueTypeManager;
 import com.atlassian.jira.issue.fields.CustomField;
@@ -44,16 +45,16 @@ public class HierarchyFieldAdminResource {
   private final UserManager userManager;
   private final TransactionTemplate transactionTemplate;
   private final JAECustomFieldManager jaeCustomFieldManager;
-//  private final IssueTypeService issueTypeService;
+  private final ManagedIssueTypesService managedIssueTypesService;
 
   @Autowired
   public HierarchyFieldAdminResource(@ComponentImport UserManager userManager,
       @ComponentImport TransactionTemplate transactionTemplate,
-      @Autowired JAECustomFieldManager jaeCustomFieldManager) {
+      @Autowired JAECustomFieldManager jaeCustomFieldManager, @ComponentImport ManagedIssueTypesService managedIssueTypesService) {
     this.userManager = userManager;
     this.transactionTemplate = transactionTemplate;
     this.jaeCustomFieldManager = jaeCustomFieldManager;
-
+    this.managedIssueTypesService = managedIssueTypesService;
   }
 
   @GET
@@ -71,7 +72,8 @@ public class HierarchyFieldAdminResource {
         if (htmlOutput != null && htmlOutput.equals("true")) {
           IssueTypeManager issueTypeManager = ComponentAccessor.getComponent(IssueTypeManager.class);
           List<IssueType> issueTypeList = new ArrayList<>();
-//          issueTypeList.add(issueTypeService.getOrCreateEpicIssueType());
+          issueTypeList.add(managedIssueTypesService.getEpicIssueType().getReturnedValue());
+          issueTypeList.add(managedIssueTypesService.getStoryIssueType().getReturnedValue());
           for (IssueType issueType : issueTypeManager.getIssueTypes()) {
             if (!issueTypeList.contains(issueType)) {
               issueTypes.add(String.format("<option>%s</option>", issueType.getName()));

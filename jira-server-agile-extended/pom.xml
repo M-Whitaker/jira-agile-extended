@@ -61,6 +61,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>com.atlassian.jira.plugins</groupId>
+      <artifactId>jira-greenhopper-api</artifactId>
+      <version>${jira.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>com.atlassian.sal</groupId>
       <artifactId>sal-api</artifactId>
       <scope>provided</scope>
