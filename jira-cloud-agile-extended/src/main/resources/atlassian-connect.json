@@ -1,0 +1,73 @@
+{
+  "key": "${addon.key}",
+  "baseUrl": "${addon.base-url}",
+  "name": "Jira Cloud Agile Extended",
+  "vendor": {
+    "name": "Matt Whitaker",
+    "url": "https://mattwhitaker.co.uk"
+  },
+  "authentication": {
+    "type": "jwt"
+  },
+  "scopes": [
+    "read", "write", "delete"
+  ],
+  "lifecycle": {
+    "installed": "/installed",
+    "uninstalled": "/uninstalled"
+  },
+  "apiMigrations": {
+    "signed-install": true
+  },
+  "modules": {
+    "generalPages": [
+      {
+        "key": "atlaskit-page-jira",
+        "location": "system.top.navigation.bar",
+        "name": {
+          "value": "Atlaskit"
+        },
+        "url": "/atlaskit"
+      },
+      {
+        "key": "atlaskit-page-confluence",
+        "location": "system.header/left",
+        "name": {
+          "value": "Atlaskit"
+        },
+        "url": "/atlaskit"
+      }
+    ],
+    "jiraIssueFields": [
+      {
+        "key" : "hierarchy-link-field",
+        "name" : {
+          "value" : "Hierarchy Link"
+        },
+        "description" : {
+          "value" : "The parent issue"
+        },
+        "type": "single_select",
+        "extractions": [{
+          "path": "category",
+          "type": "string",
+          "name": "category"
+        }],
+        "template": {
+          "type": "link",
+          "url": "/browse/{issue.key}"
+        }
+      }
+    ],
+    "webhooks": [
+      {
+        "event": "issuelink_created",
+        "url": "/create_link"
+      },
+      {
+        "event": "issuelink_deleted",
+        "url": "/delete_link"
+      }
+    ]
+  }
+}
