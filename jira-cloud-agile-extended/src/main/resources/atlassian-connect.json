@@ -20,45 +20,6 @@
     "signed-install": true
   },
   "modules": {
-    "generalPages": [
-      {
-        "key": "atlaskit-page-jira",
-        "location": "system.top.navigation.bar",
-        "name": {
-          "value": "Atlaskit"
-        },
-        "url": "/atlaskit"
-      },
-      {
-        "key": "atlaskit-page-confluence",
-        "location": "system.header/left",
-        "name": {
-          "value": "Atlaskit"
-        },
-        "url": "/atlaskit"
-      }
-    ],
-    "jiraIssueFields": [
-      {
-        "key" : "hierarchy-link-field",
-        "name" : {
-          "value" : "Hierarchy Link"
-        },
-        "description" : {
-          "value" : "The parent issue"
-        },
-        "type": "single_select",
-        "extractions": [{
-          "path": "category",
-          "type": "string",
-          "name": "category"
-        }],
-        "template": {
-          "type": "link",
-          "url": "/browse/{issue.key}"
-        }
-      }
-    ],
     "webhooks": [
       {
         "event": "issuelink_created",
