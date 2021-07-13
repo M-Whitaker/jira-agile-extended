@@ -17,6 +17,12 @@ public class ParentPanelCondition extends AbstractWebCondition {
     this.jaeCustomFieldManager = jaeCustomFieldManager;
   }
 
+  /**
+   * Check if the issue has any value in hierarchy fields.
+   * @param applicationUser the current user.
+   * @param jiraHelper      jira helper class
+   * @return true if panel should display else false.
+   */
   @Override
   public boolean shouldDisplay(ApplicationUser applicationUser, JiraHelper jiraHelper) {
     Issue currentIssue = (Issue) jiraHelper.getContextParams().get("issue");

@@ -21,6 +21,13 @@ public class ChildIssuesPanelCondition extends AbstractWebCondition {
     this.hierarchyIssueLinkType = hierarchyIssueLinkType;
   }
 
+  /**
+   * Checks if the issue has hierarchy child issues.
+   *
+   * @param applicationUser the current user
+   * @param jiraHelper      jira helper
+   * @return true if panel should display else false.
+   */
   @Override
   public boolean shouldDisplay(ApplicationUser applicationUser, JiraHelper jiraHelper) {
     Issue issue = (Issue) jiraHelper.getContextParams().get("issue");

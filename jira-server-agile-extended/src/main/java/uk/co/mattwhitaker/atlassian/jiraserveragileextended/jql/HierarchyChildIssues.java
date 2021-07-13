@@ -39,6 +39,13 @@ public class HierarchyChildIssues extends AbstractJqlFunction {
     this.jiraAuthenticationContext = jiraAuthenticationContext;
   }
 
+  /**
+   * Validates the parameters of the function.
+   * @param applicationUser the current user.
+   * @param functionOperand Represents the right hand side value of a clause.
+   * @param terminalClause Denotes a terminal nodes that contain an Operator and an Operand.
+   * @return if the function is valid.
+   */
   @Nonnull
   @Override
   public MessageSet validate(ApplicationUser applicationUser,
@@ -46,6 +53,14 @@ public class HierarchyChildIssues extends AbstractJqlFunction {
     return validateNumberOfArgs(functionOperand, 1);
   }
 
+  /**
+   * Gets the child issues of a given issue.
+   *
+   * @param queryCreationContext encapsulates the context required when creating queries in the JQL way
+   * @param operand Represents the right hand side value of a clause.
+   * @param terminalClause Denotes a terminal nodes that contain an Operator and an Operand.
+   * @return A list of issues that are child issues of the parameter.
+   */
   public List<QueryLiteral> getValues(QueryCreationContext queryCreationContext,
       FunctionOperand operand, TerminalClause terminalClause) {
     Issue inputIssue = issueManager.getIssueObject(Iterables.get(operand.getArgs(), 0));

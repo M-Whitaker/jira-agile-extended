@@ -50,7 +50,8 @@ public class HierarchyFieldAdminResource {
   @Autowired
   public HierarchyFieldAdminResource(@ComponentImport UserManager userManager,
       @ComponentImport TransactionTemplate transactionTemplate,
-      @Autowired JAECustomFieldManager jaeCustomFieldManager, @ComponentImport ManagedIssueTypesService managedIssueTypesService) {
+      @Autowired JAECustomFieldManager jaeCustomFieldManager,
+      @ComponentImport ManagedIssueTypesService managedIssueTypesService) {
     this.userManager = userManager;
     this.transactionTemplate = transactionTemplate;
     this.jaeCustomFieldManager = jaeCustomFieldManager;
@@ -60,7 +61,8 @@ public class HierarchyFieldAdminResource {
   @GET
   @Path("all")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response getAll(@Context HttpServletRequest request, @QueryParam("html") String htmlOutput) {
+  public Response getAll(@Context HttpServletRequest request,
+      @QueryParam("html") String htmlOutput) {
     if (!checkAuthorized(request)) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
@@ -70,7 +72,8 @@ public class HierarchyFieldAdminResource {
         List<String> issueTypes = new ArrayList<>();
         List<String> projects = new ArrayList<>();
         if (htmlOutput != null && htmlOutput.equals("true")) {
-          IssueTypeManager issueTypeManager = ComponentAccessor.getComponent(IssueTypeManager.class);
+          IssueTypeManager issueTypeManager = ComponentAccessor
+              .getComponent(IssueTypeManager.class);
           List<IssueType> issueTypeList = new ArrayList<>();
           issueTypeList.add(managedIssueTypesService.getEpicIssueType().getReturnedValue());
           issueTypeList.add(managedIssueTypesService.getStoryIssueType().getReturnedValue());
@@ -97,15 +100,22 @@ public class HierarchyFieldAdminResource {
         }
         CustomField customField = jaeCustomFieldManager.getOrCreateHierarchyField("Parent Link",
             HierarchyLinkField.CUSTOM_FIELD_TYPE);
-        CustomFieldBean customFieldBean = new CustomFieldBean(customField.getId(), customField.getIdAsLong(),
+        CustomFieldBean customFieldBean = new CustomFieldBean(customField.getId(),
+            customField.getIdAsLong(),
             customField.getName());
-        HierarchyFieldConfigBean config = new HierarchyFieldConfigBean(String.valueOf(customField.getIdAsLong()), customFieldBean, issueTypes, projects, "Parent", "is parent", "parents", "project = TEST");
+        HierarchyFieldConfigBean config = new HierarchyFieldConfigBean(
+            String.valueOf(customField.getIdAsLong()), customFieldBean, issueTypes, projects,
+            "Parent", "is parent", "parents", "project = TEST");
         configList.add(config);
-        CustomField customField1 = ComponentAccessor.getCustomFieldManager().getCustomFieldObject(10105L);
+        CustomField customField1 = ComponentAccessor.getCustomFieldManager()
+            .getCustomFieldObject(10105L);
         if (customField1 != null) {
-          CustomFieldBean customFieldBean1 = new CustomFieldBean(customField1.getId(), customField1.getIdAsLong(),
+          CustomFieldBean customFieldBean1 = new CustomFieldBean(customField1.getId(),
+              customField1.getIdAsLong(),
               customField1.getName());
-          HierarchyFieldConfigBean config1 = new HierarchyFieldConfigBean(String.valueOf(customField1.getIdAsLong()), customFieldBean1, issueTypes, projects, "Sprint", "sprint", "in sprint", "project = TEST2");
+          HierarchyFieldConfigBean config1 = new HierarchyFieldConfigBean(
+              String.valueOf(customField1.getIdAsLong()), customFieldBean1, issueTypes, projects,
+              "Sprint", "sprint", "in sprint", "project = TEST2");
           configList.add(config1);
         }
         return configList;
@@ -129,17 +139,21 @@ public class HierarchyFieldAdminResource {
         projects.add("TEST");
         CustomField customField = jaeCustomFieldManager.getOrCreateHierarchyField("Parent Link",
             HierarchyLinkField.CUSTOM_FIELD_TYPE);
-        CustomFieldBean customFieldBean = new CustomFieldBean(customField.getId(), customField.getIdAsLong(),
+        CustomFieldBean customFieldBean = new CustomFieldBean(customField.getId(),
+            customField.getIdAsLong(),
             customField.getName());
-        HierarchyFieldConfigBean config = new HierarchyFieldConfigBean(String.valueOf(customField.getIdAsLong()), customFieldBean, issueTypes, projects, "Parent", "is parent", "parents", "project = TEST");
+        HierarchyFieldConfigBean config = new HierarchyFieldConfigBean(
+            String.valueOf(customField.getIdAsLong()), customFieldBean, issueTypes, projects,
+            "Parent", "is parent", "parents", "project = TEST");
         return config;
       }
     })).build();
   }
 
   @PUT
-  @Path ("{id}")
-  public Response update(@Context HttpServletRequest request, @PathParam ("id") final String id, final HierarchyFieldConfigBean bean) {
+  @Path("{id}")
+  public Response update(@Context HttpServletRequest request, @PathParam("id") final String id,
+      final HierarchyFieldConfigBean bean) {
     if (!checkAuthorized(request)) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
@@ -175,8 +189,8 @@ public class HierarchyFieldAdminResource {
   }
 
   @DELETE
-  @Path ("{id}")
-  public Response delete(@Context HttpServletRequest request, @PathParam ("id") final String id) {
+  @Path("{id}")
+  public Response delete(@Context HttpServletRequest request, @PathParam("id") final String id) {
     if (!checkAuthorized(request)) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
@@ -192,6 +206,11 @@ public class HierarchyFieldAdminResource {
     })).build();
   }
 
+  /**
+   * Check if user may access page.
+   * @param request HTTP request.
+   * @return true if user is authorized else false
+   */
   private Boolean checkAuthorized(HttpServletRequest request) {
     UserKey userKey = userManager.getRemoteUserKey(request);
     if (userKey == null || !userManager.isSystemAdmin(userKey)) {

@@ -13,10 +13,14 @@ import com.atlassian.jira.issue.fields.config.FieldConfig;
 import com.atlassian.jira.issue.fields.layout.field.FieldLayoutItem;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.util.ErrorCollection;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.plugin.spring.scanner.annotation.imports.JiraImport;
+import com.atlassian.sal.api.web.context.HttpContext;
 import com.google.common.base.Preconditions;
+import java.util.Enumeration;
 import java.util.Map;
 import javax.annotation.Nonnull;
+import javax.servlet.http.HttpServletRequest;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.service.HierarchyLinkManager;
@@ -27,6 +31,7 @@ public class HierarchyLinkField extends GenericTextCFType {
 
   private final HierarchyLinkManager hierarchyLinkManager;
   private final JiraAuthenticationContext jiraAuthenticationContext;
+  private final HttpContext httpContext;
 
 
   public HierarchyLinkField(
@@ -34,11 +39,13 @@ public class HierarchyLinkField extends GenericTextCFType {
       @JiraImport GenericConfigManager genericConfigManager,
       @JiraImport TextFieldCharacterLengthValidator textFieldCharacterLengthValidator,
       @JiraImport JiraAuthenticationContext jiraAuthenticationContext,
-      @Autowired HierarchyLinkManager hierarchyLinkManager) {
+      @Autowired HierarchyLinkManager hierarchyLinkManager,
+      @ComponentImport HttpContext httpContext) {
     super(customFieldValuePersister, genericConfigManager, textFieldCharacterLengthValidator,
         jiraAuthenticationContext);
     this.hierarchyLinkManager = hierarchyLinkManager;
     this.jiraAuthenticationContext = jiraAuthenticationContext;
+    this.httpContext = httpContext;
   }
 
   @Nonnull
@@ -102,5 +109,27 @@ public class HierarchyLinkField extends GenericTextCFType {
   public void validateFromParams(CustomFieldParams relevantParams,
       ErrorCollection errorCollectionToAddTo, FieldConfig config) {
     super.validateFromParams(relevantParams, errorCollectionToAddTo, config);
+  }
+
+  /**
+   * Checks to see if the user is using the mobile application.
+   * @return false if user is using the mobile app else true.
+   */
+  private Boolean isEnabled() {
+    HttpServletRequest req = httpContext.getRequest();
+
+    if (req != null) {
+      Enumeration<String> headerNames = req.getHeaderNames();
+
+      if (headerNames != null) {
+        while (headerNames.hasMoreElements()) {
+          String headerName = headerNames.nextElement();
+          log.error(headerName + ": " + req.getHeader(headerName));
+          if (headerName.equals("mobile-app-request"))
+            return false;
+        }
+      }
+    }
+    return true;
   }
 }

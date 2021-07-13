@@ -9,10 +9,10 @@ public class PropertyDao {
   public static final String SERVICE = "jae-propertyDao";
   private static final String KEY_JAE_PROPS = "JiraAgileExtended.properties";
   private static final long GLOBAL_ENTITY_ID = 1L;
-  @Autowired
   private PersistenceService persistenceService;
 
-  public PropertyDao() {
+  public PropertyDao(@Autowired PersistenceService persistenceService) {
+    this.persistenceService = persistenceService;
   }
 
   public Long getLongProperty(String key) {

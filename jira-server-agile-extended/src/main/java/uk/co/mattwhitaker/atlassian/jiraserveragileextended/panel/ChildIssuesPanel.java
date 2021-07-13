@@ -16,6 +16,13 @@ import uk.co.mattwhitaker.atlassian.jiraserveragileextended.model.LinkType;
 
 public class ChildIssuesPanel extends AbstractJiraContextProvider {
 
+  /**
+   * Get the velocity parameters.
+   *
+   * @param applicationUser the current user.
+   * @param jiraHelper      jira helper class
+   * @return a map of variables to use in velocity template.
+   */
   @Override
   public Map<String, Object> getContextMap(ApplicationUser applicationUser, JiraHelper jiraHelper) {
     IssueLinkManager issueLinkManager = ComponentAccessor.getIssueLinkManager();

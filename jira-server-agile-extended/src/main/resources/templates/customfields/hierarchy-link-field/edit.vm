@@ -1,3 +1,10 @@
+#* @vtlvariable name="customField" type="com.atlassian.jira.issue.fields.CustomField" *#
+#* @vtlvariable name="fieldLayoutItem" type="com.atlassian.jira.issue.fields.layout.field.FieldLayoutItem" *#
+#* @vtlvariable name="webResourceManager" type="com.atlassian.plugin.webresource.WebResourceManager" *#
+#* @vtlvariable name="requestContext" type="com.atlassian.jira.util.velocity.VelocityRequestContext" *#
+#* @vtlvariable name="action" type="com.atlassian.jira.web.action.JiraWebActionSupport" *#
+#* @vtlvariable name="destinationIssueSummary" type="java.lang.String" *#
+
 #disable_html_escaping()
 #customControlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters $auiparams)
 <head>

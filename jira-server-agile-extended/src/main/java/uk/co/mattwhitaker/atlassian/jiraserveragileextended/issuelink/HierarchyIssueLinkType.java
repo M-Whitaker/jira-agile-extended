@@ -18,10 +18,9 @@ public class HierarchyIssueLinkType {
   private static final Logger log = LoggerFactory.getLogger(HierarchyIssueLinkType.class);
 
   private static final String KEY_DEFAULT_LINKTYPE_ID = "JiraAgileExtended.HierarchyLink.Default.linktype.id";
+  public static final String LINK_STYLE = "jira_jae_parent_link";
   private final PropertyDao propertyDao;
   private final IssueLinkTypeManager issueLinkTypeManager;
-
-  public static String LINK_STYLE = "jira_jae_parent_link";
 
   @Autowired
   public HierarchyIssueLinkType(@Autowired PropertyDao propertyDao,
@@ -30,6 +29,11 @@ public class HierarchyIssueLinkType {
     this.issueLinkTypeManager = issueLinkTypeManager;
   }
 
+  /**
+   * Gets the issue link type created for a given name else creates it.
+   * @param linkTypeName The name of the issue link type.
+   * @return The issue link type.
+   */
   public IssueLinkType getOrCreateHierarchyLinkType(String linkTypeName) {
     return getHierarchyLinkType(linkTypeName)
         .orElseGet(() -> createHierarchyLinkType(linkTypeName));
@@ -42,11 +46,12 @@ public class HierarchyIssueLinkType {
   }
 
   private IssueLinkType createHierarchyLinkType(String linkTypeName) {
+    //TODO: Remove constants for link type.
     issueLinkTypeManager
         .createIssueLinkType("Parent Link", "is Parent of", "has Parent", LINK_STYLE);
     Collection<IssueLinkType> linkTypes = issueLinkTypeManager.getIssueLinkTypesByStyle(LINK_STYLE);
     if (linkTypes.size() > 1) {
-      log.warn("More than one issue link type with GreenHopper link style -- using first",
+      log.warn("More than one issue link type with hierarchy link style -- using first",
           new Object[0]);
     } else if (linkTypes.isEmpty()) {
       log.error("Could not create issue link type Hierarchy", new Object[0]);

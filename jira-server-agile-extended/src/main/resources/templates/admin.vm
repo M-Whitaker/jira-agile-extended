@@ -1,3 +1,6 @@
+#* @vtlvariable name="webResourceManager" type="com.atlassian.plugin.webresource.WebResourceManager" *#
+#* @vtlvariable name="requestContext" type="com.atlassian.jira.util.velocity.VelocityRequestContext" *#
+
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
@@ -10,26 +13,34 @@
 <body>
 <h1>Hierarchy Field Configuration</h1>
 <p>
-  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fermentum ligula a erat tincidunt fringilla.
-  Curabitur pharetra risus sed luctus facilisis. In congue velit vitae ligula venenatis mollis. Donec vel augue eget elit imperdiet interdum.
-  Nullam vel diam vel ex consequat vulputate. Fusce hendrerit a nisl nec egestas. Mauris varius velit et libero mollis viverra. Fusce quis dapibus libero, id blandit lacus.
-  Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam aliquam vitae lectus quis congue. Vestibulum iaculis imperdiet feugiat. Donec at laoreet diam. Duis a sem in.
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fermentum ligula a erat tincidunt
+  fringilla.
+  Curabitur pharetra risus sed luctus facilisis. In congue velit vitae ligula venenatis mollis.
+  Donec vel augue eget elit imperdiet interdum.
+  Nullam vel diam vel ex consequat vulputate. Fusce hendrerit a nisl nec egestas. Mauris varius
+  velit et libero mollis viverra. Fusce quis dapibus libero, id blandit lacus.
+  Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam aliquam vitae lectus quis
+  congue. Vestibulum iaculis imperdiet feugiat. Donec at laoreet diam. Duis a sem in.
 </p>
-<button style="float: right;margin-right: 15px" id="create-new-hierarchy-field" class="aui-button aui-button-primary">Create</button>
+<button style="float: right;margin-right: 15px" id="create-new-hierarchy-field"
+        class="aui-button aui-button-primary">Create
+</button>
 <table id="hierarchy-field-config-table"></table>
 <section
-        id="demo-warning-dialog"
-        class="aui-dialog2 aui-dialog2-medium aui-dialog2-warning aui-layer"
-        role="dialog"
-        tabindex="-1"
-        aria-labelledby="demo-warning-dialog--heading"
-        hidden>
+    id="demo-warning-dialog"
+    class="aui-dialog2 aui-dialog2-medium aui-dialog2-warning aui-layer"
+    role="dialog"
+    tabindex="-1"
+    aria-labelledby="demo-warning-dialog--heading"
+    hidden>
   <header class="aui-dialog2-header">
-    <h1 class="aui-dialog2-header-main" id="demo-warning-dialog--heading">Confirm you want to delete this thing</h1>
+    <h1 class="aui-dialog2-header-main" id="demo-warning-dialog--heading">Confirm you want to delete
+      this thing</h1>
     <button class="aui-close-button" type="button" aria-label="close"></button>
   </header>
   <div class="aui-dialog2-content">
-    <p>If you do this, there's no going back. Are you certain that you want this thing to be gone forever?</p>
+    <p>If you do this, there's no going back. Are you certain that you want this thing to be gone
+      forever?</p>
   </div>
   <footer class="aui-dialog2-footer">
     <div class="aui-dialog2-footer-actions">

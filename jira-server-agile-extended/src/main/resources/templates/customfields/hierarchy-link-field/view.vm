@@ -1,4 +1,8 @@
+#* @vtlvariable name="customField" type="com.atlassian.jira.issue.fields.CustomField" *#
+#* @vtlvariable name="fieldLayoutItem" type="com.atlassian.jira.issue.fields.layout.field.FieldLayoutItem" *#
+#* @vtlvariable name="webResourceManager" type="com.atlassian.plugin.webresource.WebResourceManager" *#
 #* @vtlvariable name="requestContext" type="com.atlassian.jira.util.velocity.VelocityRequestContext" *#
+#* @vtlvariable name="destinationIssueSummary" type="java.lang.String" *#
 
 #disable_html_escaping()
 #if ($value)

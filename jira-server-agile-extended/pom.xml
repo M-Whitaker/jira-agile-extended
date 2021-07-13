@@ -56,7 +56,7 @@
     <!-- Atlassian Dependencies -->
     <dependency>
       <groupId>com.atlassian.jira</groupId>
-      <artifactId>jira-api</artifactId>
+      <artifactId>jira-core</artifactId>
       <version>${jira.version}</version>
       <scope>provided</scope>
     </dependency>

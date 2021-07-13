@@ -48,6 +48,12 @@ public class JAECustomFieldManager {
     this.propertyDao = propertyDao;
   }
 
+  /**
+   * Gets or creates a managed custom field of a given name and type.
+   * @param name field name.
+   * @param type field type.
+   * @return the custom field requested.
+   */
   public CustomField getOrCreateHierarchyField(String name, String type) {
     return getHierarchyField(name).orElseGet(() -> {
       try {
@@ -60,6 +66,12 @@ public class JAECustomFieldManager {
     });
   }
 
+  /**
+   * Helper function to get an issue object from custom field.
+   * @param issue the issue.
+   * @param customField the custom field with an issue key/id in it.
+   * @return the issue object from the string value in the custom field.
+   */
   public Issue getIssueFromField(Issue issue, CustomField customField) {
     if (customField != null) {
       String parentLinkFieldValue = (String) customField.getValue(issue);

@@ -21,11 +21,19 @@ public class ParentPanel extends AbstractJiraContextProvider {
   public final IssueManager issueManager;
   public final JAECustomFieldManager jaeCustomFieldManager;
 
-  public ParentPanel(@ComponentImport IssueManager issueManager, @Autowired JAECustomFieldManager jaeCustomFieldManager) {
+  public ParentPanel(@ComponentImport IssueManager issueManager,
+      @Autowired JAECustomFieldManager jaeCustomFieldManager) {
     this.issueManager = issueManager;
     this.jaeCustomFieldManager = jaeCustomFieldManager;
   }
 
+  /**
+   * Get the velocity parameters.
+   *
+   * @param applicationUser the current user.
+   * @param jiraHelper      jira helper class
+   * @return a map of variables to use in velocity template.
+   */
   @Override
   public Map<String, Object> getContextMap(ApplicationUser applicationUser, JiraHelper jiraHelper) {
     Map<String, Object> contextMap = new HashMap<>();

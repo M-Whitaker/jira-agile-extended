@@ -16,29 +16,34 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AdminServlet extends HttpServlet {
 
   private static final Logger log = LoggerFactory.getLogger(AdminServlet.class);
 
-  @ComponentImport
   private final UserManager userManager;
-  @ComponentImport
   private final LoginUriProvider loginUriProvider;
-  @ComponentImport
   private final TemplateRenderer renderer;
 
   @Autowired
-  public AdminServlet(UserManager userManager, LoginUriProvider loginUriProvider,
-      TemplateRenderer renderer) {
+  public AdminServlet(@ComponentImport UserManager userManager, @ComponentImport LoginUriProvider loginUriProvider,
+      @ComponentImport TemplateRenderer renderer) {
     this.userManager = userManager;
     this.loginUriProvider = loginUriProvider;
     this.renderer = renderer;
   }
 
+  /**
+   * Renders the velocity template on get request.
+   * @param req HTTP request information.
+   * @param resp HTTP response information.
+   * @throws IOException when render can't find velocity template provided.
+   */
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-      throws ServletException, IOException {
+      throws IOException {
     UserKey userKey = userManager.getRemoteUserKey(req);
     if (userKey == null || !userManager.isSystemAdmin(userKey)) {
       redirectToLogin(req, resp);

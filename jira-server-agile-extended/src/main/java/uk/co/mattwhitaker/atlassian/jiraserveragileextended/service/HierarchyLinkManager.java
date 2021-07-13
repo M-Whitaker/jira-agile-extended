@@ -34,6 +34,12 @@ public class HierarchyLinkManager {
     this.issueLinkManager = issueLinkManager;
   }
 
+  /**
+   * Create hierarchy issue link between two issues.
+   * @param applicationUser the current user.
+   * @param issue the outgoing issue.
+   * @param parentIssue the incoming issue.
+   */
   public void associateIssueWithParent(
       ApplicationUser applicationUser, Issue issue, Issue parentIssue) {
     IssueLinkType hierarchyLink = hierarchyIssueLinkType.getOrCreateHierarchyLinkType("");
@@ -41,10 +47,16 @@ public class HierarchyLinkManager {
       issueLinkManager.createIssueLink(
           issue.getId(), parentIssue.getId(), hierarchyLink.getId(), 0L, applicationUser);
     } catch (CreateException e) {
-      log.debug("Could not create issue link!");
+      log.error("Could not create issue link!");
     }
   }
 
+  /**
+   * Delete hierarchy issue link between two issues.
+   * @param applicationUser the current user.
+   * @param issue the outgoing issue.
+   * @param parentIssue the incoming issue.
+   */
   public void disassociateIssueWithParent(
       ApplicationUser applicationUser, Issue issue, Issue parentIssue) {
     IssueLinkType hierarchyLink = hierarchyIssueLinkType.getOrCreateHierarchyLinkType("");
@@ -53,10 +65,15 @@ public class HierarchyLinkManager {
     try {
       issueLinkManager.removeIssueLink(issueLink, applicationUser);
     } catch (IllegalArgumentException e) {
-      log.debug("Cannot Remove issue link!");
+      log.error("Cannot Remove issue link!");
     }
   }
 
+  /**
+   * Delete hierarchy issue link between two issues.
+   * @param applicationUser the current user.
+   * @param issue the outgoing issue.
+   */
   public void disassociateParentFromIssue(ApplicationUser applicationUser, Issue issue) {
     List<Issue> outWardIssues =
         getIssueLinksForIssue(issue, false, LinkDirection.OUTWARD, applicationUser);
@@ -66,6 +83,14 @@ public class HierarchyLinkManager {
     }
   }
 
+  /**
+   * Get hierarchy issue links for a given issue.
+   * @param issue the issue to get links of.
+   * @param excludeSystemLinks whether to exclude hidden link types.
+   * @param linkDirection The link direction to retrieve
+   * @param applicationUser the current user.
+   * @return a list of issues that are linked to issue given parameters.
+   */
   public List<Issue> getIssueLinksForIssue(
       Issue issue,
       boolean excludeSystemLinks,
@@ -90,6 +115,12 @@ public class HierarchyLinkManager {
   }
 
 
+  /**
+   * Get all child issues of a given link type for an issue recursively.
+   * @param issue the root issue.
+   * @param applicationUser the current user.
+   * @return a set of issues which are descendants of the issue.
+   */
   public Set<Issue> getRecursiveChildIssues(Issue issue, ApplicationUser applicationUser) {
     Set<Issue> remainingIssues = new HashSet<>();
     Set<Issue> visitedIssues = new HashSet<>();
