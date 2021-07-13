@@ -1,26 +1,30 @@
 import ForgeUI, {
-  render,
-  useProductContext,
   CustomField,
   CustomFieldEdit,
-  Text,
-  Select,
-  Option,
   Image,
-  Link
+  Link,
+  Option,
+  render,
+  Select,
+  Text,
+  useProductContext,
+  useState
 } from "@forge/ui";
+import api, {route} from "@forge/api";
 
 const View = () => {
   const {extensionContext: {fieldValue}} = useProductContext();
+  const issue = useState(async () => await getIssue(fieldValue));
+  console.log(issue[0].fields);
 
   return (
     <CustomField>
-      <Image size={"xsmall"} src={"/viewavatar?size=medium&avatarId=10315&avatarType=issuetype"} alt={"issueType"}/>
+      <Image size={"xsmall"} src={issue[0].fields.issuetype.iconUrl} alt={"issueType"}/>
       <Text>
-        <Link href={"/browse/TEST-1"}>
+        <Link href={route`/browse/{fieldValue}`}>
           {fieldValue}
         </Link>
-        Issue Summary
+        {issue[0].fields.summary}
       </Text>
     </CustomField>
   );
@@ -41,6 +45,14 @@ const Edit = () => {
     </CustomFieldEdit>
   );
 }
+
+const getIssue = async (issueId) => {
+  const res = await api
+      .asUser()
+      .requestJira(route`/rest/api/3/issue/${issueId}`);
+
+  return await res.json();
+};
 
 export const runView = render(<View/>);
 export const runEdit = render(<Edit/>);

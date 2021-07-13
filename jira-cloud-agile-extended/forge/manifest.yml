@@ -9,8 +9,8 @@ modules:
       icon: https://developer.atlassian.com/platform/forge/images/icons/issue-countries-icon.svg
       type: string
       validation:
-        expression: value == null || !!value.match("^[A-Za-z]+$")
-        errorMessage: The value must consist only of letters
+        expression: value == null || !!value.match("((?<!([A-Z]{1,10})-?)[A-Z]+-\d+)")
+        errorMessage: The value must be a JIRA Key
       function: main
       edit:
         function: edit
@@ -27,7 +27,7 @@ connectModules:
           "uninstalled": "/uninstalled"
         }
   ]
-  "jira:generalPages":[
+  "jira:generalPages": [
       {
           "key": "atlaskit-page-jira",
           "location": "system.top.navigation.bar",
@@ -45,9 +45,10 @@ connectModules:
   ]
 remotes:
   - key: connect
-    baseUrl: https://{id-here}.ngrok.io
+    baseUrl: https://5ac6f6a27f56.ngrok.io
 permissions:
   scopes: [
+      "read:jira-work",
       "read:connect-jira",
       "write:connect-jira",
       "delete:connect-jira"
