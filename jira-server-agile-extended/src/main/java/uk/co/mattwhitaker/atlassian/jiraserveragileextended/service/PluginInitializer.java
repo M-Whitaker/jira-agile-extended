@@ -17,6 +17,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.customfield.HierarchyLinkField;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.listener.BacklogPositionListener;
 
 @ExportAsService({PluginInitializer.class})
 @Named("PluginInitializer")
@@ -28,15 +29,17 @@ public class PluginInitializer implements InitializingBean, DisposableBean {
   private final EventPublisher eventPublisher;
   private final JAECustomFieldManager jaeCustomFieldManager;
   private final IssueLinkTypeManager issueLinkTypeManager;
+  private final BacklogPositionListener backlogPositionListener;
 
 
   @Autowired
   public PluginInitializer(@ComponentImport EventPublisher eventPublisher,
       @ComponentImport IssueLinkTypeManager issueLinkTypeManager,
-      @Autowired JAECustomFieldManager jaeCustomFieldManager) {
+      @Autowired JAECustomFieldManager jaeCustomFieldManager, @Autowired BacklogPositionListener backlogPositionListener) {
     this.eventPublisher = eventPublisher;
     this.issueLinkTypeManager = issueLinkTypeManager;
     this.jaeCustomFieldManager = jaeCustomFieldManager;
+    this.backlogPositionListener = backlogPositionListener;
   }
 
 
@@ -94,6 +97,7 @@ public class PluginInitializer implements InitializingBean, DisposableBean {
       log.info("Issue {} has been created at {}.", issue.getKey(), issue.getCreated());
     } else if (eventTypeId.equals(EventType.ISSUE_UPDATED_ID)) {
       log.info("Issue {} has been updated.", issue.getKey());
+      backlogPositionListener.calculateRanks();
     } else if (eventTypeId.equals(EventType.ISSUE_CLOSED_ID)) {
       log.info("Issue {} has been closed at {}.", issue.getKey(), issue.getUpdated());
     }
