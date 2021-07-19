@@ -68,25 +68,39 @@
   </web-panel>  
   <!-- add our web items -->  
   <!-- admin ui -->  
-  <servlet name="Admin Servlet" i18n-name-key="admin-servlet.name" key="admin-servlet" class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.admin.AdminServlet"> 
-    <description key="admin-servlet.description">The Admin Servlet Plugin</description>  
-    <url-pattern>/jiraagileextended/admin</url-pattern> 
-  </servlet>  
-  <web-section i18n-name-key="admin-section.name" key="jiraagileextended-web-section" location="admin_plugins_menu" weight="1000"> 
-    <description key="admin-section.description">The Admin Section Plugin</description>  
-    <label key="admin-section.label"/> 
+  <servlet name="JAE Hierarchy Admin Servlet" i18n-name-key="jae-hierarchy-admin-servlet.name" key="jae-hierarchy-admin-servlet" class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.admin.HierarchyAdminServlet">
+    <description key="jae-hierarchy-admin-servlet.description">The Admin Servlet Plugin</description>
+    <url-pattern>/jiraagileextended/admin/hierarchy</url-pattern>
+  </servlet>
+  <servlet name="JAE Backlog Admin Servlet" i18n-name-key="jae-backlog-admin-servlet.name" key="jae-backlog-admin-servlet" class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.admin.BacklogAdminServlet">
+    <description key="jae-backlog-admin-servlet.description">The Admin Servlet Plugin</description>
+    <url-pattern>/jiraagileextended/admin/backlog</url-pattern>
+  </servlet>
+  <web-section i18n-name-key="jae-admin-section.name" key="jae-admin-section" location="admin_plugins_menu" weight="1000">
+    <description key="jae-admin-section.description">The Admin Section Plugin</description>
+    <label key="jae-admin-section.label"/>
   </web-section>  
-  <web-item key="jira-menu-item" name="admin-servlet.name" section="admin_plugins_menu/jiraagileextended-web-section" weight="10" application="jira"> 
+  <web-item key="jae-hierarchy-admin" name="jae-hierarchy-admin-servlet.name" section="admin_plugins_menu/jae-admin-section" weight="10" application="jira">
     <description>Link to admin page.</description>  
-    <label key="admin-servlet.name"/>  
-    <link linkId="admin-servlet-link">/plugins/servlet/jiraagileextended/admin</link> 
-  </web-item>  
-  <web-resource key="jira-server-agile-extended-admin-resources" name="jira-server-agile-extended Admin Web Resources"> 
+    <label key="jae-hierarchy-admin-servlet.name"/>
+    <link linkId="jae-hierarchy-admin-servlet-link">/plugins/servlet/jiraagileextended/admin/hierarchy</link>
+  </web-item>
+  <web-item key="jae-backlog-admin" name="jae-backlog-admin-servlet.name" section="admin_plugins_menu/jae-admin-section" weight="10" application="jira">
+    <description>Link to admin page.</description>
+    <label key="jae-backlog-admin-servlet.name"/>
+    <link linkId="jae-backlog-admin-servlet-link">/plugins/servlet/jiraagileextended/admin/backlog</link>
+  </web-item>
+  <web-resource key="jae-hierarchy-admin-resources" name="jira-server-agile-extended Hierarchy Admin Web Resources">
     <dependency>com.atlassian.auiplugin:ajs</dependency>  
     <dependency>com.atlassian.auiplugin:aui-restfultable</dependency>  
     <dependency>com.atlassian.auiplugin:aui-dialog2</dependency>  
     <resource type="download" name="HierarchyFieldConfiguration.js" location="/static/dist/HierarchyFieldConfiguration.js"/> 
-  </web-resource>  
+  </web-resource>
+  <web-resource key="jae-backlog-admin-resources" name="jira-server-agile-extended Backlog Admin Web Resources">
+    <dependency>com.atlassian.auiplugin:ajs</dependency>
+    <dependency>com.atlassian.auiplugin:aui-dialog2</dependency>
+    <resource type="download" name="BacklogFieldConfiguration.js" location="/static/dist/BacklogFieldConfiguration.js"/>
+  </web-resource>
   <rest key="rest" path="/jira-agile-extended-admin" version="1.0"> 
     <description>Provides REST resources for the admin UI.</description> 
   </rest>  

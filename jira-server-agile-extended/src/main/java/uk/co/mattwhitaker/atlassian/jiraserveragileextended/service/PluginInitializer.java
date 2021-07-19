@@ -97,7 +97,7 @@ public class PluginInitializer implements InitializingBean, DisposableBean {
       log.info("Issue {} has been created at {}.", issue.getKey(), issue.getCreated());
     } else if (eventTypeId.equals(EventType.ISSUE_UPDATED_ID)) {
       log.info("Issue {} has been updated.", issue.getKey());
-      backlogPositionListener.calculateRanks();
+      backlogPositionListener.calculateRanks(issueEvent);
     } else if (eventTypeId.equals(EventType.ISSUE_CLOSED_ID)) {
       log.info("Issue {} has been closed at {}.", issue.getKey(), issue.getUpdated());
     }

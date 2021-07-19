@@ -32,6 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.admin.BacklogAdminServlet;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.service.PropertyDao;
 
 @Component
 public class BacklogPositionField extends CalculatedCFType {
@@ -43,17 +45,19 @@ public class BacklogPositionField extends CalculatedCFType {
   private final IssuePropertyService issuePropertyService;
   private final JqlQueryParser jqlQueryParser;
   private final LuceneSearchProvider searchProvider;
+  private final PropertyDao propertyDao;
 
   @Autowired
   public BacklogPositionField(@ComponentImport JqlQueryParser jqlQueryParser,
       @ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
       @ComponentImport IssueManager issueManager,
-      @ComponentImport IssuePropertyService issuePropertyService) {
+      @ComponentImport IssuePropertyService issuePropertyService, @Autowired PropertyDao propertyDao) {
     this.jqlQueryParser = jqlQueryParser;
     this.jiraAuthenticationContext = jiraAuthenticationContext;
     this.searchProvider = ComponentAccessor.getComponent(LuceneSearchProvider.class);
     this.issueManager = issueManager;
     this.issuePropertyService = issuePropertyService;
+    this.propertyDao = propertyDao;
   }
 
   @NotNull
@@ -62,6 +66,7 @@ public class BacklogPositionField extends CalculatedCFType {
       FieldLayoutItem fieldLayoutItem) {
     Map<String, Object> params =  super.getVelocityParameters(issue, field, fieldLayoutItem);
     params.put("issue", issue);
+    params.put("clientRefresh", propertyDao.getLongProperty(BacklogAdminServlet.KEY_DEFAULT_BACKLOG_CLIENT_REFRESH) * 1000);
     return params;
   }
 

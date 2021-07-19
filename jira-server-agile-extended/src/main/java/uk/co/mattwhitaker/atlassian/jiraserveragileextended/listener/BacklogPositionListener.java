@@ -7,6 +7,7 @@ import com.atlassian.jira.entity.Entity;
 import com.atlassian.jira.entity.property.EntityPropertyService;
 import com.atlassian.jira.entity.property.EntityPropertyService.PropertyResult;
 import com.atlassian.jira.entity.property.EntityPropertyService.SetPropertyValidationResult;
+import com.atlassian.jira.event.issue.IssueEvent;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.search.DocumentWithId;
@@ -30,6 +31,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import org.ofbiz.core.entity.GenericEntityException;
+import org.ofbiz.core.entity.GenericValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,10 +64,25 @@ public class BacklogPositionListener {
     this.searchProvider = ComponentAccessor.getComponent(LuceneSearchProvider.class);
   }
 
-  public void calculateRanks() {
+  public void calculateRanks(IssueEvent issueEvent) {
+    java.util.List<GenericValue> changeLog = new ArrayList<>();
+    try {
+      changeLog = issueEvent.getChangeLog().getRelated("ChildChangeItem");
+    } catch (GenericEntityException e) {
+      e.printStackTrace();
+    }
+    for (GenericValue value: changeLog) {
+      if (value.getAllFields().get("field").equals("Rank")) {
+        rankIssues("filter=10000 AND issuetype not in (Epic, subTaskIssueTypes()) AND resolution IS EMPTY ORDER BY rank");
+      }
+    }
+  }
+
+  private void rankIssues(String jqlStatement) {
+    log.debug("Ranking issues in {}", jqlStatement);
     List<DocumentWithId> issues = new ArrayList<>();
     try {
-      issues = getIssues("filter=10000 AND issuetype not in (Epic, subTaskIssueTypes()) AND resolution IS EMPTY ORDER BY rank");
+      issues = getIssues(jqlStatement);
     } catch (JqlParseException | SearchException e) {
       e.printStackTrace();
     }
@@ -72,7 +90,6 @@ public class BacklogPositionListener {
       DocumentWithId document = issues.get(i);
       Issue issue = issueManager
           .getIssueObject(document.getDocument().getField("key").stringValue());
-      System.out.println(issue.getKey());
       try {
         publishIssueProperties(issue, jiraAuthenticationContext.getLoggedInUser(),
             String.format("%d/%d", i + 1, issuesSize));
@@ -92,10 +109,10 @@ public class BacklogPositionListener {
       PropertyResult result = issuePropertyService.setProperty(user, validationResult);
       ErrorCollection errors = result.getErrorCollection();
       if (errors.hasAnyErrors()) {
-        System.out.println(errors);
+        log.error(String.valueOf(errors));
       }
     } else {
-      System.out.println(validationResult.getErrorCollection());
+      log.error(String.valueOf(validationResult.getErrorCollection()));
     }
   }
 

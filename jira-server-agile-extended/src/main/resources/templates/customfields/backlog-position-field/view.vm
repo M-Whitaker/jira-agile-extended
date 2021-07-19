@@ -4,6 +4,7 @@
 #* @vtlvariable name="requestContext" type="com.atlassian.jira.util.velocity.VelocityRequestContext" *#
 #* @vtlvariable name="action" type="com.atlassian.jira.web.action.JiraWebActionSupport" *#
 #* @vtlvariable name="issue" type="com.atlassian.jira.issue.Issue" *#
+#* @vtlvariable name="clientRefresh" type="java.lang.Long" *#
 
 <div id="jaeBacklogPosition-$issue.getId()">
   <div id="backlog-output-$issue.getId()"></div>
@@ -36,6 +37,7 @@
       render: function() {
         if (this.model.has("value")) {
           var text = this.model.get("value").backlogPosition;
+          // TODO: Fix view on structure detail
           this.output.html(text);
         }
         return this;
@@ -47,7 +49,7 @@
 
     setInterval(function() {
       backlog.fetch();
-    }, 10000);
+    }, $clientRefresh);
 
     // function handleVisibilityChange() {
     //   if (document.visibilityState === "hidden") {
