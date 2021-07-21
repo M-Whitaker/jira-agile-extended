@@ -1,130 +1,130 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
-  <plugin-info>
-    <description>${project.description}</description>
-    <version>${project.version}</version>
-    <application-version min="7.0.0" max="8.13.8"/>
-    <vendor name="${project.organization.name}" url="${project.organization.url}"/>
-    <param name="plugin-icon">images/pluginIcon.png</param>
-    <param name="plugin-logo">images/pluginLogo.png</param>
-    <!--    <param name="atlassian-data-center-compatible">true</param>-->
-    <!--    <param name="post.update.url">-->
-    <!--      <![CDATA[/plugins/servlet/jiraagileextended/whats-new]]>-->
-    <!--    </param>-->
-    <!--    <startup>early</startup>-->
-  </plugin-info>
-  <!-- add our i18n resource -->
-  <resource type="i18n" name="i18n" location="jira-server-agile-extended"/>
-  <!-- add our event listeners -->
-  <!-- add our web resources -->
-  <web-resource key="jira-server-agile-extended-resources"
-    name="jira-server-agile-extended Web Resources">
-    <dependency>com.atlassian.auiplugin:ajs</dependency>
-    <resource type="download" name="jira-server-agile-extended.css"
-      location="/static/css/jira-server-agile-extended.css"/>
-    <resource type="download" name="JiraServerAgileExtended.js"
-      location="/static/js/JiraServerAgileExtended.js"/>
-    <resource type="download" name="images/" location="/images"/>
-    <context>jira-server-agile-extended</context>
-  </web-resource>
-  <!-- add our custom field types -->
-  <customfield-type name="Admin-Only Custom Field" i18n-name-key="admin-only-field.name"
-    key="admintextfield"
-    class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.customfield.AdminOnlyFieldType">
-    <description>A text field only editable by those with admin permissions</description>
-    <resource name="view" type="velocity"
-      location="templates/plugins/fields/view/view-basictext.vm"/>
-    <resource name="edit" type="velocity" location="/templates/fields/edit.vm"/>
-    <resource name="xml" type="velocity" location="templates/plugins/fields/xml/xml-basictext.vm"/>
-  </customfield-type>
-  <customfield-type name="Hierarchy Link Field" i18n-name-key="hierarchy-link-field.name"
-    key="hierarchylinkfield"
-    class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.customfield.HierarchyLinkField">
-    <description key="hierarchy-link-field-description"
-      i18n-name-key="hierarchy-link-field.description">The Hierarchy Link Field Plugin
-    </description>
-    <resource name="view" type="velocity"
-      location="/templates/customfields/hierarchy-link-field/view.vm"/>
-    <resource name="view-searcher" type="velocity"
-      location="templates/plugins/fields/view-searcher/view-searcher-basictext.vm"/>
-    <resource name="edit" type="velocity"
-      location="/templates/customfields/hierarchy-link-field/edit.vm"/>
-    <resource name="edit-searcher" type="velocity"
-      location="templates/plugins/fields/edit-searcher/search-basictext.vm"/>
-    <resource name="xml" type="velocity"
-      location="/templates/customfields/hierarchy-link-field/xml.vm"/>
-  </customfield-type>
-  <web-resource name="Hierarchy Link Field Resources"
-    key="jira-server-agile-extended-hierarchy-link-field-resources">
-    <dependency>com.atlassian.auiplugin:ajs</dependency>
-    <dependency>com.atlassian.auiplugin:aui-select2</dependency>
-    <context>atl.general</context>
-  </web-resource>
-  <!-- add our web panels -->
-  <web-panel name="Parent Panel" i18n-name-key="parent-panel.name" key="parent-panel"
-    location="atl.jira.view.issue.right.context" weight="50">
-    <description key="parent-panel.description">The Parent Panel Plugin</description>
-    <context-provider class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.panel.ParentPanel"/>
-    <condition class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.panel.ParentPanelCondition"/>
-    <resource name="view" type="velocity" location="templates/panels/parent-panel.vm"/>
-    <label key="parent-panel.title"/>
-  </web-panel>
-  <web-panel name="Child Issues" i18n-name-key="child-issues-panel.name" key="child-issues-panel"
-    location="atl.jira.view.issue.left.context" weight="500">
-    <description key="child-issues-panel.description">The ChildIssuesPanel Plugin</description>
-    <context-provider
-      class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.panel.ChildIssuesPanel"/>
-    <condition
-      class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.panel.ChildIssuesPanelCondition"/>
-    <resource name="view" type="velocity" location="templates/panels/child-issues-panel.vm"/>
-    <label key="child-issues-panel.title"/>
-  </web-panel>
-  <!-- admin ui -->
-  <servlet name="Admin Servlet" i18n-name-key="admin-servlet.name" key="admin-servlet"
-    class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.admin.AdminServlet">
-    <description key="admin-servlet.description">The Admin Servlet Plugin</description>
-    <url-pattern>/jiraagileextended/admin</url-pattern>
+<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2"> 
+  <plugin-info> 
+    <description>${project.description}</description>  
+    <version>${project.version}</version>  
+    <application-version min="7.0.0" max="8.13.8"/>  
+    <vendor name="${project.organization.name}" url="${project.organization.url}"/>  
+    <param name="plugin-icon">images/pluginIcon.png</param>  
+    <param name="plugin-logo">images/pluginLogo.png</param>  
+    <!--    <param name="atlassian-data-center-compatible">true</param>-->  
+    <!--    <param name="post.update.url">-->  
+    <!--      <![CDATA[/plugins/servlet/jiraagileextended/whats-new]]>-->  
+    <!--    </param>-->  
+    <!--    <startup>early</startup>--> 
+  </plugin-info>  
+  <!-- add our i18n resource -->  
+  <resource type="i18n" name="i18n" location="jira-server-agile-extended"/>  
+  <!-- add our event listeners -->  
+  <!-- add our web resources -->  
+  <web-resource key="jira-server-agile-extended-resources" name="jira-server-agile-extended Web Resources"> 
+    <dependency>com.atlassian.auiplugin:ajs</dependency>  
+    <resource type="download" name="jira-server-agile-extended.css" location="/static/css/jira-server-agile-extended.css"/>  
+    <resource type="download" name="JiraServerAgileExtended.js" location="/static/js/JiraServerAgileExtended.js"/>  
+    <resource type="download" name="images/" location="/images"/>  
+    <context>jira-server-agile-extended</context> 
+  </web-resource>  
+  <!-- add our custom field types -->  
+  <customfield-type name="Admin-Only Custom Field" i18n-name-key="admin-only-field.name" key="admintextfield" class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.customfield.AdminOnlyFieldType"> 
+    <description>A text field only editable by those with admin permissions</description>  
+    <resource name="view" type="velocity" location="templates/plugins/fields/view/view-basictext.vm"/>  
+    <resource name="edit" type="velocity" location="/templates/fields/edit.vm"/>  
+    <resource name="xml" type="velocity" location="templates/plugins/fields/xml/xml-basictext.vm"/> 
+  </customfield-type>  
+  <customfield-type name="Backlog Position Field" i18n-name-key="backlog-position-field.name" key="backlogpositionfield" class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.customfield.BacklogPositionField"> 
+    <description>A calculated backlog field</description>  
+    <resource name="view" type="velocity" location="/templates/customfields/backlog-position-field/view.vm"/>  
+    <resource name="edit" type="velocity" location="/templates/customfields/backlog-position-field/view.vm"/>  
+    <resource name="xml" type="velocity" location="templates/plugins/fields/xml/xml-basictext.vm"/> 
+  </customfield-type>  
+  <customfield-type name="Hierarchy Link Field" i18n-name-key="hierarchy-link-field.name" key="hierarchylinkfield" class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.customfield.HierarchyLinkField"> 
+    <description key="hierarchy-link-field-description" i18n-name-key="hierarchy-link-field.description">The Hierarchy Link Field Plugin</description>  
+    <resource name="view" type="velocity" location="/templates/customfields/hierarchy-link-field/view.vm"/>  
+    <resource name="view-searcher" type="velocity" location="templates/plugins/fields/view-searcher/view-searcher-basictext.vm"/>  
+    <resource name="edit" type="velocity" location="/templates/customfields/hierarchy-link-field/edit.vm"/>  
+    <resource name="edit-searcher" type="velocity" location="templates/plugins/fields/edit-searcher/search-basictext.vm"/>  
+    <resource name="xml" type="velocity" location="/templates/customfields/hierarchy-link-field/xml.vm"/> 
+  </customfield-type>  
+  <web-resource name="Hierarchy Link Field Resources" key="jira-server-agile-extended-hierarchy-link-field-resources"> 
+    <dependency>com.atlassian.auiplugin:ajs</dependency>  
+    <dependency>com.atlassian.auiplugin:aui-select2</dependency>  
+    <context>atl.general</context> 
+  </web-resource>  
+  <!-- add our web panels -->  
+  <web-panel name="Parent Panel" i18n-name-key="parent-panel.name" key="parent-panel" location="atl.jira.view.issue.right.context" weight="50"> 
+    <description key="parent-panel.description">The Parent Panel Plugin</description>  
+    <context-provider class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.panel.ParentPanel"/>  
+    <condition class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.panel.ParentPanelCondition"/>  
+    <resource name="view" type="velocity" location="templates/panels/parent-panel.vm"/>  
+    <label key="parent-panel.title"/> 
+  </web-panel>  
+  <web-panel name="Child Issues" i18n-name-key="child-issues-panel.name" key="child-issues-panel" location="atl.jira.view.issue.left.context" weight="500"> 
+    <description key="child-issues-panel.description">The ChildIssuesPanel Plugin</description>  
+    <context-provider class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.panel.ChildIssuesPanel"/>  
+    <condition class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.panel.ChildIssuesPanelCondition"/>  
+    <resource name="view" type="velocity" location="templates/panels/child-issues-panel.vm"/>  
+    <label key="child-issues-panel.title"/> 
+  </web-panel>  
+  <!-- add our web items -->  
+  <!-- admin ui -->  
+  <servlet name="JAE Hierarchy Admin Servlet" i18n-name-key="jae-hierarchy-admin-servlet.name" key="jae-hierarchy-admin-servlet" class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.admin.HierarchyAdminServlet">
+    <description key="jae-hierarchy-admin-servlet.description">The Admin Servlet Plugin</description>
+    <url-pattern>/jiraagileextended/admin/hierarchy</url-pattern>
   </servlet>
-  <web-section i18n-name-key="admin-section.name" key="jiraagileextended-web-section"
-    location="admin_plugins_menu" weight="1000">
-    <description key="admin-section.description">The Admin Section Plugin</description>
-    <label key="admin-section.label"/>
-  </web-section>
-  <web-item key="jira-menu-item" name="admin-servlet.name"
-    section="admin_plugins_menu/jiraagileextended-web-section" weight="10" application="jira">
-    <description>Link to admin page.</description>
-    <label key="admin-servlet.name"/>
-    <link linkId="admin-servlet-link">/plugins/servlet/jiraagileextended/admin</link>
+  <servlet name="JAE Backlog Admin Servlet" i18n-name-key="jae-backlog-admin-servlet.name" key="jae-backlog-admin-servlet" class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.admin.BacklogAdminServlet">
+    <description key="jae-backlog-admin-servlet.description">The Admin Servlet Plugin</description>
+    <url-pattern>/jiraagileextended/admin/backlog</url-pattern>
+  </servlet>
+  <web-section i18n-name-key="jae-admin-section.name" key="jae-admin-section" location="admin_plugins_menu" weight="1000">
+    <description key="jae-admin-section.description">The Admin Section Plugin</description>
+    <label key="jae-admin-section.label"/>
+  </web-section>  
+  <web-item key="jae-hierarchy-admin" name="jae-hierarchy-admin-servlet.name" section="admin_plugins_menu/jae-admin-section" weight="10" application="jira">
+    <description>Link to admin page.</description>  
+    <label key="jae-hierarchy-admin-servlet.name"/>
+    <link linkId="jae-hierarchy-admin-servlet-link">/plugins/servlet/jiraagileextended/admin/hierarchy</link>
   </web-item>
-  <web-resource key="jira-server-agile-extended-admin-resources"
-    name="jira-server-agile-extended Admin Web Resources">
-    <dependency>com.atlassian.auiplugin:ajs</dependency>
-    <dependency>com.atlassian.auiplugin:aui-restfultable</dependency>
-    <dependency>com.atlassian.auiplugin:aui-dialog2</dependency>
-    <resource type="download" name="HierarchyFieldConfiguration.js"
-      location="/static/dist/HierarchyFieldConfiguration.js"/>
+  <web-item key="jae-backlog-admin" name="jae-backlog-admin-servlet.name" section="admin_plugins_menu/jae-admin-section" weight="10" application="jira">
+    <description>Link to admin page.</description>
+    <label key="jae-backlog-admin-servlet.name"/>
+    <link linkId="jae-backlog-admin-servlet-link">/plugins/servlet/jiraagileextended/admin/backlog</link>
+  </web-item>
+  <web-resource key="jae-hierarchy-admin-resources" name="jira-server-agile-extended Hierarchy Admin Web Resources">
+    <dependency>com.atlassian.auiplugin:ajs</dependency>  
+    <dependency>com.atlassian.auiplugin:aui-restfultable</dependency>  
+    <dependency>com.atlassian.auiplugin:aui-dialog2</dependency>  
+    <resource type="download" name="HierarchyFieldConfiguration.js" location="/static/dist/HierarchyFieldConfiguration.js"/> 
   </web-resource>
-  <rest key="rest" path="/jira-agile-extended-admin" version="1.0">
-    <description>Provides REST resources for the admin UI.</description>
-  </rest>
-  <!-- JQL Functions -->
-  <jql-function name="Hierarchy Child Issues" i18n-name-key="hierarchy-child-issues.name"
-    key="hierarchy-child-issues"
-    class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.jql.HierarchyChildIssues">
-    <description key="hierarchy-child-issues.description">The Hierarchy Child Issues Plugin
-    </description>
-    <fname>agileChildIssuesOf</fname>
-    <list>true</list>
-  </jql-function>
-  <!-- Jira Structure -->
-  <structure-extender key="agile-hierarchy-extender"
-    name="Jira Structure Extender: Child issues by agile"
-    class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.structure.extenders.HierarchyExtender">
-    <label key="hierarchyextender.name"/>
-    <icon spanClass="s-fa s-fa-link"/>
-    <resource type="velocity" name="form" location="templates/extenders/hierarchyextender-form.vm"/>
-    <resource type="velocity" name="summary"
-      location="templates/extenders/hierarchyextender-summary.vm"/>
-  </structure-extender>
+  <web-resource key="jae-backlog-admin-resources" name="jira-server-agile-extended Backlog Admin Web Resources">
+    <dependency>com.atlassian.auiplugin:ajs</dependency>
+    <dependency>com.atlassian.auiplugin:aui-dialog2</dependency>
+    <resource type="download" name="BacklogFieldConfiguration.js" location="/static/dist/BacklogFieldConfiguration.js"/>
+  </web-resource>
+  <rest key="rest" path="/jira-agile-extended-admin" version="1.0"> 
+    <description>Provides REST resources for the admin UI.</description> 
+  </rest>  
+  <!-- JQL Functions -->  
+  <jql-function name="Hierarchy Child Issues" i18n-name-key="hierarchy-child-issues.name" key="hierarchy-child-issues" class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.jql.HierarchyChildIssues"> 
+    <description key="hierarchy-child-issues.description">The Hierarchy Child Issues Plugin</description>  
+    <fname>agileChildIssuesOf</fname>  
+    <list>true</list> 
+  </jql-function>  
+  <!-- Jira Structure -->  
+  <structure-extender key="agile-hierarchy-extender" name="Jira Structure Extender: Child issues by agile" class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.structure.extenders.HierarchyExtender"> 
+    <label key="hierarchyextender.name"/>  
+    <icon spanClass="s-fa s-fa-link"/>  
+    <resource type="velocity" name="form" location="templates/extenders/hierarchyextender-form.vm"/>  
+    <resource type="velocity" name="summary" location="templates/extenders/hierarchyextender-summary.vm"/> 
+  </structure-extender>  
+  <web-section name="Agile Extended" i18n-name-key="jae-backlog-settings.name" key="jae-backlog-settings" section="jira.agile.board.tools" weight="1000">
+    <description key="jae-backlog-settings.description">The Backlog Refresh Plugin</description>
+    <label key="jae-backlog-settings.label"/>
+  </web-section>
+  <web-section location="board-tools-section" key="board-tools-jae" weight="30"/>
+  <web-item section="board-tools-jae" key="jae-backlog-refresh" i18n-name-key="jae-backlog-refresh.name" weight="10">
+    <label key="jae-backlog-refresh.label"/>
+    <link>/browse/TEST-1</link>
+  </web-item>
+
 </atlassian-plugin>

@@ -1,0 +1,68 @@
+#* @vtlvariable name="customField" type="com.atlassian.jira.issue.fields.CustomField" *#
+#* @vtlvariable name="fieldLayoutItem" type="com.atlassian.jira.issue.fields.layout.field.FieldLayoutItem" *#
+#* @vtlvariable name="webResourceManager" type="com.atlassian.plugin.webresource.WebResourceManager" *#
+#* @vtlvariable name="requestContext" type="com.atlassian.jira.util.velocity.VelocityRequestContext" *#
+#* @vtlvariable name="action" type="com.atlassian.jira.web.action.JiraWebActionSupport" *#
+#* @vtlvariable name="issue" type="com.atlassian.jira.issue.Issue" *#
+#* @vtlvariable name="clientRefresh" type="java.lang.Long" *#
+
+<div id="jaeBacklogPosition-$issue.getId()">
+  <div id="backlog-output-$issue.getId()"></div>
+</div>
+
+<script type="text/javascript">
+  (function(jQuery) {
+    var timer;
+
+    // Our model
+    var Backlog = Backbone.Model.extend({
+      defaults: {
+        value: {
+          backlogPosition: ""
+        }
+      },
+      urlRoot: "$requestContext.baseUrl/rest/api/2/issue/$issue.getId()/properties/agileExtendedBacklogPosition"
+    });
+    var backlog = new Backlog();
+
+// Our view
+    var BacklogView = Backbone.View.extend({
+      el: document.getElementById('jaeBacklogPosition-$issue.getId()'),
+      initialize: function() {
+        this.model.fetch();
+        this.model.bind('add', this.render);
+        this.model.on('change',this.render,this);
+        this.output = jQuery(this.el).find("#backlog-output-$issue.getId()");
+      },
+      render: function() {
+        if (this.model.has("value")) {
+          var text = this.model.get("value").backlogPosition;
+          // TODO: Fix view on structure detail
+          this.output.html(text);
+        }
+        return this;
+      }
+    });
+
+    var backlogView = new BacklogView({ model: backlog });
+    backlogView.render();
+
+    setInterval(function() {
+      backlog.fetch();
+    }, $clientRefresh);
+
+    // function handleVisibilityChange() {
+    //   if (document.visibilityState === "hidden") {
+    //     clearInterval(timer);
+    //   } else  {
+    //     timer = setInterval(function() {
+    //       console.debug("Fetching data...");
+    //       backlog.fetch();
+    //     }, 10000);
+    //   }
+    // }
+    //
+    // document.addEventListener("visibilitychange", handleVisibilityChange, false);
+
+  })(AJS.$ || jQuery);
+</script>

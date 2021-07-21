@@ -11,7 +11,6 @@ import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
-import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +62,7 @@ public class HierarchyFieldAdminResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response getAll(@Context HttpServletRequest request,
       @QueryParam("html") String htmlOutput) {
-    if (!checkAuthorized(request)) {
+    if (!AdminUtils.checkAuthorized(request, userManager)) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
     return Response.ok(transactionTemplate.execute(new TransactionCallback() {
@@ -127,7 +126,7 @@ public class HierarchyFieldAdminResource {
   @Path("{id}")
   @Produces(MediaType.APPLICATION_JSON)
   public Response get(@Context HttpServletRequest request, @PathParam("id") final String id) {
-    if (!checkAuthorized(request)) {
+    if (!AdminUtils.checkAuthorized(request, userManager)) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
@@ -154,7 +153,7 @@ public class HierarchyFieldAdminResource {
   @Path("{id}")
   public Response update(@Context HttpServletRequest request, @PathParam("id") final String id,
       final HierarchyFieldConfigBean bean) {
-    if (!checkAuthorized(request)) {
+    if (!AdminUtils.checkAuthorized(request, userManager)) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
@@ -173,7 +172,7 @@ public class HierarchyFieldAdminResource {
 
   @POST
   public Response create(@Context HttpServletRequest request, final HierarchyFieldConfigBean bean) {
-    if (!checkAuthorized(request)) {
+    if (!AdminUtils.checkAuthorized(request, userManager)) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
@@ -191,7 +190,7 @@ public class HierarchyFieldAdminResource {
   @DELETE
   @Path("{id}")
   public Response delete(@Context HttpServletRequest request, @PathParam("id") final String id) {
-    if (!checkAuthorized(request)) {
+    if (!AdminUtils.checkAuthorized(request, userManager)) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
@@ -204,20 +203,6 @@ public class HierarchyFieldAdminResource {
         return map;
       }
     })).build();
-  }
-
-  /**
-   * Check if user may access page.
-   * @param request HTTP request.
-   * @return true if user is authorized else false
-   */
-  private Boolean checkAuthorized(HttpServletRequest request) {
-    UserKey userKey = userManager.getRemoteUserKey(request);
-    if (userKey == null || !userManager.isSystemAdmin(userKey)) {
-      return false;
-    } else {
-      return true;
-    }
   }
 
   @NoArgsConstructor

@@ -1,0 +1,34 @@
+#* @vtlvariable name="webResourceManager" type="com.atlassian.plugin.webresource.WebResourceManager" *#
+#* @vtlvariable name="requestContext" type="com.atlassian.jira.util.velocity.VelocityRequestContext" *#
+#* @vtlvariable name="clientRefresh" type="java.lang.Long" *#
+
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=EDGE">
+  <title>Hierarchy Field Configuration</title>
+  <meta name="decorator" content="atl.admin">
+    $webResourceManager.requireResource(
+        "uk.co.mattwhitaker.atlassian.jiraserveragileextended.jira-server-agile-extended:jae-backlog-admin-resources")
+</head>
+<body>
+<h1>Backlog Admin</h1>
+<form class="aui" method="POST">
+  <div class="field-group">
+    <label for="client-refresh-freq">Client Refresh Frequency
+      <span class="aui-icon icon-required">(required)</span></label>
+    <input class="text small-field" type="text"
+           id="client-refresh-freq" name="client-refresh-freq" value="$clientRefresh">
+    <div class="description">The time in seconds between each fetch of the backlog on the client. Be aware decreasing this value will put more load
+      on the client and server.
+    </div>
+  </div>
+  <div class="buttons-container">
+    <div class="buttons">
+      <input class="button submit" type="submit" value="Save" id="backlog-save-button">
+      <a class="cancel" href="#">Cancel</a>
+    </div>
+  </div>
+</form>
+</body>
+</html>
