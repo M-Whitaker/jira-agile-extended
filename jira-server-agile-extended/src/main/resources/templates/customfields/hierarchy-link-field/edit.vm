@@ -66,8 +66,8 @@
   });
       #if ($value)
       AJS.$("#$customField.id").
-      auiSelect2('data', {id: "$!value", text: "$!value $destinationIssueSummary"});
-      AJS.$("#$customField.id").auiSelect2('search', "$!value $destinationIssueSummary");
+      auiSelect2('data', {id: "$!value", text: `$!value $destinationIssueSummary`});
+      AJS.$("#$customField.id").auiSelect2('search', `$!value $destinationIssueSummary`);
       #end
 </script>
 #customControlFooter ($action $customField.id $fieldLayoutItem.fieldDescription $displayParameters $auiparams)

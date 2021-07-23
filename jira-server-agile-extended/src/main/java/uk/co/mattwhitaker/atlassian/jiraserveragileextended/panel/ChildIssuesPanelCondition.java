@@ -34,12 +34,18 @@ public class ChildIssuesPanelCondition extends AbstractWebCondition {
     IssueLinkManager issueLinkManager = ComponentAccessor.getIssueLinkManager();
 
     List<IssueLink> childIssues = new ArrayList<>();
-    IssueLinkType hierarchyLink = hierarchyIssueLinkType.getOrCreateHierarchyLinkType("");
-    issueLinkManager.getIssueLinks(hierarchyLink.getId()).forEach(issueLink -> {
-      if (!issueLink.getSourceId().equals(issue.getId())) {
-        childIssues.add(issueLink);
+    List<IssueLinkType> hierarchyLinks = hierarchyIssueLinkType.getHierarchyLinkTypes();
+    if (!hierarchyLinks.isEmpty()) {
+      for (IssueLinkType hierarchyLink : hierarchyLinks) {
+        issueLinkManager.getIssueLinks(hierarchyLink.getId()).forEach(issueLink -> {
+          if (!issueLink.getSourceId().equals(issue.getId())) {
+            childIssues.add(issueLink);
+          }
+        });
       }
-    });
-    return !childIssues.isEmpty();
+      return !childIssues.isEmpty();
+    }
+    else
+      return false;
   }
 }

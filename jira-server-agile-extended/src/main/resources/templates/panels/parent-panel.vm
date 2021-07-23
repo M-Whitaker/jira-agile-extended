@@ -1,14 +1,35 @@
 #* @vtlvariable name="field" type="uk.co.mattwhitaker.atlassian.jiraserveragileextended.model.Field" *#
+#* @vtlvariable name="linkTypes" type="java.util.Map" *#
+#* @vtlvariable name="webResourceManager" type="com.atlassian.plugin.webresource.WebResourceManager" *#
 
-<div class="item-details">
-    #foreach( $field in $fields )
-      <dl>
-        <dt>$field.name:</dt>
-        <dd>
+$webResourceManager.requireResource("com.atlassian.auiplugin:aui-tabs")
+
+<div class="aui-tabs horizontal-tabs">
+  <ul class="tabs-menu">
+      #set($idx = 0)
+      #foreach( $linkType in $linkTypes.entrySet())
+        <li class="menu-item #if($idx == 0) active-tab #end">
+          <a href="#tabs-$linkType.key.getName()">$linkType.key.getName()</a>
+        </li>
+      #set($idx = $idx + 1)
+      #end
+  </ul>
+    #set($idx = 0)
+    #foreach( $linkType in $linkTypes.entrySet())
+      <div class="tabs-pane #if($idx == 0) active-pane #end" id="tabs-$linkType.key.getName()">
+        <div class="item-details">
+            #foreach( $field in $linkType.value )
+              <dl>
+                <dt>$field.name:</dt>
+                <dd>
                 <span class="view-issue-field">
                     $field.value
                 </span>
-        </dd>
-      </dl>
+                </dd>
+              </dl>
+            #end
+        </div>
+      </div>
+    #set($idx = $idx + 1)
     #end
 </div>

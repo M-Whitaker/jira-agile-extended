@@ -1,6 +1,7 @@
 package uk.co.mattwhitaker.atlassian.jiraserveragileextended.customfield;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.customfields.impl.GenericTextCFType;
@@ -74,10 +75,13 @@ public class HierarchyLinkField extends GenericTextCFType {
     Preconditions.checkNotNull(issue);
     Preconditions.checkNotNull(parent);
     Issue parentIssue = ComponentAccessor.getIssueManager().getIssueObject(parent);
-    // TODO: Check if link was created...
-    hierarchyLinkManager
-        .associateIssueWithParent(jiraAuthenticationContext.getLoggedInUser(), issue, parentIssue);
-    super.createValue(field, issue, parent);
+    try {
+      hierarchyLinkManager
+          .associateIssueWithParent(jiraAuthenticationContext.getLoggedInUser(), issue, parentIssue, field);
+      super.createValue(field, issue, parent);
+    } catch (CreateException e) {
+      log.error("Failed to create link...");
+    }
   }
 
   @Override
@@ -85,25 +89,24 @@ public class HierarchyLinkField extends GenericTextCFType {
     Preconditions.checkNotNull(issue);
     if (parent == null) {
       hierarchyLinkManager
-          .disassociateParentFromIssue(jiraAuthenticationContext.getLoggedInUser(), issue);
+          .disassociateParentFromIssue(jiraAuthenticationContext.getLoggedInUser(), issue, customField);
+      super.updateValue(customField, issue, null);
     } else {
       hierarchyLinkManager
-          .disassociateParentFromIssue(jiraAuthenticationContext.getLoggedInUser(), issue);
+          .disassociateParentFromIssue(jiraAuthenticationContext.getLoggedInUser(), issue, customField);
       Issue parentIssue = ComponentAccessor.getIssueManager().getIssueObject(parent);
-      hierarchyLinkManager
-          .associateIssueWithParent(jiraAuthenticationContext.getLoggedInUser(), issue,
-              parentIssue);
+      try {
+        hierarchyLinkManager
+            .associateIssueWithParent(jiraAuthenticationContext.getLoggedInUser(), issue,
+                parentIssue, customField);
+        super.updateValue(customField, issue, parent);
+      } catch (CreateException e) {
+        log.error("Failed to create link: " + e.getMessage());
+      }
     }
-    super.updateValue(customField, issue, parent);
   }
 
   //TODO: Error on default value
-
-
-  @Override
-  public String getDefaultValue(FieldConfig fieldConfig) {
-    return null;
-  }
 
   @Override
   public void validateFromParams(CustomFieldParams relevantParams,

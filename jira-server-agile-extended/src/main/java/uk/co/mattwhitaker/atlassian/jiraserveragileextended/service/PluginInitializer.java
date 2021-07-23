@@ -73,8 +73,9 @@ public class PluginInitializer implements InitializingBean, DisposableBean {
     if (PLUGIN_KEY.equals(startUpPluginKey)) {
       log.info("Starting " + PLUGIN_KEY + "...");
       try {
-        CustomField customField = jaeCustomFieldManager.getOrCreateHierarchyField("Parent Link",
-            HierarchyLinkField.CUSTOM_FIELD_TYPE);
+        CustomField deliveryField = jaeCustomFieldManager.getOrCreateHierarchyField("Delivery Link", HierarchyLinkField.CUSTOM_FIELD_TYPE, "delivers", "is delivered by");
+        CustomField specificationField = jaeCustomFieldManager.getOrCreateHierarchyField("Specification Link", HierarchyLinkField.CUSTOM_FIELD_TYPE, "is specified by", "specifies");
+        CustomField estimationField = jaeCustomFieldManager.getOrCreateHierarchyField("Estimation Link", HierarchyLinkField.CUSTOM_FIELD_TYPE, "is estimated by", "estimates");
       } catch (IllegalArgumentException error) {
         log.error(error.getMessage());
       }

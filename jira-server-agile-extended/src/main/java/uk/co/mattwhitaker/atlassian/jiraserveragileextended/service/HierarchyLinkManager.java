@@ -2,6 +2,7 @@ package uk.co.mattwhitaker.atlassian.jiraserveragileextended.service;
 
 import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.link.IssueLink;
 import com.atlassian.jira.issue.link.IssueLinkManager;
 import com.atlassian.jira.issue.link.IssueLinkType;
@@ -41,14 +42,11 @@ public class HierarchyLinkManager {
    * @param parentIssue the incoming issue.
    */
   public void associateIssueWithParent(
-      ApplicationUser applicationUser, Issue issue, Issue parentIssue) {
-    IssueLinkType hierarchyLink = hierarchyIssueLinkType.getOrCreateHierarchyLinkType("");
-    try {
-      issueLinkManager.createIssueLink(
-          issue.getId(), parentIssue.getId(), hierarchyLink.getId(), 0L, applicationUser);
-    } catch (CreateException e) {
-      log.error("Could not create issue link!");
-    }
+      ApplicationUser applicationUser, Issue issue, Issue parentIssue, CustomField field) throws CreateException {
+    // Get the CustomField name to get the link type
+    IssueLinkType hierarchyLink = hierarchyIssueLinkType.getHierarchyLinkTypeByName(field.getFieldName());
+    issueLinkManager.createIssueLink(
+        issue.getId(), parentIssue.getId(), hierarchyLink.getId(), 0L, applicationUser);
   }
 
   /**
@@ -58,8 +56,8 @@ public class HierarchyLinkManager {
    * @param parentIssue the incoming issue.
    */
   public void disassociateIssueWithParent(
-      ApplicationUser applicationUser, Issue issue, Issue parentIssue) {
-    IssueLinkType hierarchyLink = hierarchyIssueLinkType.getOrCreateHierarchyLinkType("");
+      ApplicationUser applicationUser, Issue issue, Issue parentIssue, CustomField field) {
+    IssueLinkType hierarchyLink = hierarchyIssueLinkType.getHierarchyLinkTypeByName(field.getFieldName());
     IssueLink issueLink =
         issueLinkManager.getIssueLink(issue.getId(), parentIssue.getId(), hierarchyLink.getId());
     try {
@@ -74,12 +72,13 @@ public class HierarchyLinkManager {
    * @param applicationUser the current user.
    * @param issue the outgoing issue.
    */
-  public void disassociateParentFromIssue(ApplicationUser applicationUser, Issue issue) {
+  public void disassociateParentFromIssue(ApplicationUser applicationUser, Issue issue, CustomField field) {
+    // TODO: add checks
     List<Issue> outWardIssues =
         getIssueLinksForIssue(issue, false, LinkDirection.OUTWARD, applicationUser);
     log.debug(String.valueOf(outWardIssues));
     for (Issue outWardIssue : outWardIssues) {
-      disassociateIssueWithParent(applicationUser, issue, outWardIssue);
+      disassociateIssueWithParent(applicationUser, issue, outWardIssue, field);
     }
   }
 

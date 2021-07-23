@@ -1,5 +1,6 @@
 package uk.co.mattwhitaker.atlassian.jiraserveragileextended.service;
 
+import com.almworks.jira.structure.api.auth.AuthContext.Custom;
 import com.atlassian.jira.bc.ServiceOutcome;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.managedconfiguration.ConfigurationItemAccessLevel;
@@ -15,15 +16,19 @@ import com.atlassian.jira.issue.customfields.CustomFieldSearcher;
 import com.atlassian.jira.issue.customfields.CustomFieldType;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.issuetype.IssueType;
+import com.atlassian.jira.issue.link.IssueLinkType;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.customfield.HierarchyLinkField;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.issuelink.HierarchyIssueLinkType;
 
 @Service
 public class JAECustomFieldManager {
@@ -35,17 +40,25 @@ public class JAECustomFieldManager {
   private final CustomFieldManager customFieldManager;
   private final ManagedConfigurationItemService managedConfigurationItemService;
   private final PropertyDao propertyDao;
-
+  private final HierarchyIssueLinkType hierarchyIssueLinkType;
 
   @Autowired
   public JAECustomFieldManager(@ComponentImport CustomFieldManager customFieldManager,
       @ComponentImport IssueManager issueManager,
       @ComponentImport ManagedConfigurationItemService managedConfigurationItemService,
-      @Autowired PropertyDao propertyDao) {
+      @Autowired PropertyDao propertyDao,
+      @Autowired HierarchyIssueLinkType hierarchyIssueLinkType) {
     this.customFieldManager = customFieldManager;
     this.issueManager = issueManager;
     this.managedConfigurationItemService = managedConfigurationItemService;
     this.propertyDao = propertyDao;
+    this.hierarchyIssueLinkType = hierarchyIssueLinkType;
+  }
+
+  public List<CustomField> getHierarchyFields(Issue issue) {
+    List<CustomField> customFields = customFieldManager.getCustomFieldObjects(issue);
+    return customFields.stream().filter(customField -> customField.getCustomFieldType().getKey().equals(HierarchyLinkField.CUSTOM_FIELD_TYPE)).collect(
+        Collectors.toList());
   }
 
   /**
@@ -54,10 +67,10 @@ public class JAECustomFieldManager {
    * @param type field type.
    * @return the custom field requested.
    */
-  public CustomField getOrCreateHierarchyField(String name, String type) {
+  public CustomField getOrCreateHierarchyField(String name, String type, String outwardLink, String inwardLink) {
     return getHierarchyField(name).orElseGet(() -> {
       try {
-        return createHierarchyField(name, type);
+        return createHierarchyField(name, type, outwardLink, inwardLink);
       } catch (GenericEntityException e) {
         log.error("Could not create custom field");
         e.printStackTrace();
@@ -89,7 +102,7 @@ public class JAECustomFieldManager {
         .ofNullable(customFieldManager.getCustomFieldObject(customFieldId)) : Optional.empty();
   }
 
-  private CustomField createHierarchyField(String name, String type)
+  private CustomField createHierarchyField(String name, String type, String outwardLink, String inwardLink)
       throws IllegalArgumentException, GenericEntityException {
     Collection<CustomField> fields = customFieldManager.getCustomFieldObjectsByName(name);
     // Check if field already exists with the same name
@@ -100,6 +113,8 @@ public class JAECustomFieldManager {
       propertyDao.setLongProperty(
           String.format(KEY_DEFAULT_CUSTOMFIELD_ID_TEMPLATE, name.replaceAll("\\s", "")),
           field.getIdAsLong());
+      // TODO: Create link type for field
+      IssueLinkType hierarchyLink = hierarchyIssueLinkType.getOrCreateHierarchyLinkType(name, outwardLink, inwardLink);
       log.info("Locking field: " + field.getFieldName());
       lock(field);
       return field;
@@ -112,6 +127,7 @@ public class JAECustomFieldManager {
 
   private void deleteHierarchyField(String name) throws IllegalArgumentException {
     Collection<CustomField> customFields = customFieldManager.getCustomFieldObjectsByName(name);
+    // TODO: Remove link type for field
 
     for (CustomField customField : customFields) {
       try {

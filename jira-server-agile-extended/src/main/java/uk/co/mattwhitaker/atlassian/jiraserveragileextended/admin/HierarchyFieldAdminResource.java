@@ -97,8 +97,7 @@ public class HierarchyFieldAdminResource {
           issueTypes.add("Epic");
           projects.add("TEST");
         }
-        CustomField customField = jaeCustomFieldManager.getOrCreateHierarchyField("Parent Link",
-            HierarchyLinkField.CUSTOM_FIELD_TYPE);
+        CustomField customField = jaeCustomFieldManager.getOrCreateHierarchyField("Delivery Link", HierarchyLinkField.CUSTOM_FIELD_TYPE, "delivers", "is delivered by");
         CustomFieldBean customFieldBean = new CustomFieldBean(customField.getId(),
             customField.getIdAsLong(),
             customField.getName());
@@ -136,8 +135,7 @@ public class HierarchyFieldAdminResource {
         issueTypes.add("Epic");
         List<String> projects = new ArrayList<>();
         projects.add("TEST");
-        CustomField customField = jaeCustomFieldManager.getOrCreateHierarchyField("Parent Link",
-            HierarchyLinkField.CUSTOM_FIELD_TYPE);
+        CustomField customField = jaeCustomFieldManager.getOrCreateHierarchyField("Delivery Link", HierarchyLinkField.CUSTOM_FIELD_TYPE, "delivers", "is delivered by");
         CustomFieldBean customFieldBean = new CustomFieldBean(customField.getId(),
             customField.getIdAsLong(),
             customField.getName());

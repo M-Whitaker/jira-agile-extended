@@ -106,8 +106,7 @@ public class HierarchyChildIssuesTest {
         parentIssue.setProjectId(10001L);
         parentIssue.setIssueTypeId("1");
         parentIssue.setSummary("Child Issue");
-        parentIssue.setCustomFieldValue(jaeCustomFieldManager.getOrCreateHierarchyField("Parent Link",
-            HierarchyLinkField.CUSTOM_FIELD_TYPE), parentIssue.getKey());
+        parentIssue.setCustomFieldValue(jaeCustomFieldManager.getOrCreateHierarchyField("Delivery Link", HierarchyLinkField.CUSTOM_FIELD_TYPE, "delivers", "is delivered by"), parentIssue.getKey());
         try {
             Issue issue = issueManager.createIssueObject(jiraAuthenticationContext.getLoggedInUser(), parentIssue);
             actualList = function.getValues(null, new FunctionOperand(FUNC_NAME, issue.getKey()), null);

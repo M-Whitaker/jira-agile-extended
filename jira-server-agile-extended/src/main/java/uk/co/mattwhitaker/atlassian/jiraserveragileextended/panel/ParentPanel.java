@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.co.mattwhitaker.atlassian.jiraserveragileextended.customfield.HierarchyLinkField;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.model.Field;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.service.JAECustomFieldManager;
 
@@ -37,13 +36,16 @@ public class ParentPanel extends AbstractJiraContextProvider {
   @Override
   public Map<String, Object> getContextMap(ApplicationUser applicationUser, JiraHelper jiraHelper) {
     Map<String, Object> contextMap = new HashMap<>();
-    CustomField parentLinkField = jaeCustomFieldManager.getOrCreateHierarchyField("Parent Link",
-        HierarchyLinkField.CUSTOM_FIELD_TYPE);
+    Map<CustomField, List<Field>> linkTypes = new HashMap<>();
     Issue currentIssue = (Issue) jiraHelper.getContextParams().get("issue");
-    Issue parentIssue = jaeCustomFieldManager.getIssueFromField(currentIssue, parentLinkField);
-    if (parentIssue != null) {
-      contextMap.put("fields", getFieldValues(parentIssue));
+    List<CustomField> hierarchyLinkFields = jaeCustomFieldManager.getHierarchyFields(currentIssue);
+    for (CustomField hierarchyLinkField : hierarchyLinkFields) {
+      Issue parentIssue = jaeCustomFieldManager.getIssueFromField(currentIssue, hierarchyLinkField);
+      if (parentIssue != null) {
+        linkTypes.put(hierarchyLinkField, getFieldValues(parentIssue));
+      }
     }
+    contextMap.put("linkTypes", linkTypes);
     return contextMap;
   }
 
@@ -51,12 +53,6 @@ public class ParentPanel extends AbstractJiraContextProvider {
     List<Field> fields = new ArrayList<>();
     fields.add(new Field("Key", issue.getKey()));
     fields.add(new Field("Summary", issue.getSummary()));
-//    switch (issue.getIssueType().getName()) {
-//      case "Initiative": {
-//
-//      }
-//    }
-
     return fields;
   }
 }
