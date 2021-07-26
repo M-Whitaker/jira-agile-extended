@@ -10,7 +10,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @AllArgsConstructor
 @ToString
 @Getter
-public final class CustomFieldBean {
+public final class IssueLinkBean {
   @JsonProperty
   private String id;
   @JsonProperty

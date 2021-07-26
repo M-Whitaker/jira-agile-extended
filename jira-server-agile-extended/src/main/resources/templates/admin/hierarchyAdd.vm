@@ -1,0 +1,67 @@
+#* @vtlvariable name="webResourceManager" type="com.atlassian.plugin.webresource.WebResourceManager" *#
+#* @vtlvariable name="requestContext" type="com.atlassian.jira.util.velocity.VelocityRequestContext" *#
+#enable_html_escaping()
+
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=EDGE">
+  <title>Hierarchy Field Configuration</title>
+  <meta name="decorator" content="atl.admin">
+    $webResourceManager.requireResource(
+        "uk.co.mattwhitaker.atlassian.jiraserveragileextended.jira-server-agile-extended:jae-hierarchy-admin-resources")
+</head>
+<body>
+    <header class="aui-page-header">
+      <div class="aui-page-header-inner">
+        <div class="aui-page-header-image">
+                <span class="aui-avatar aui-avatar-large aui-avatar-project">
+                    <span class="aui-avatar-inner">
+                        <img alt="My awesome project" src="images/avatar-project.svg">
+                    </span>
+                </span>
+        </div>
+        <div class="aui-page-header-main">
+          <ol class="aui-nav aui-nav-breadcrumbs">
+            <li><a href="/jira/plugins/servlet/jiraagileextended/admin/hierarchy">Hierarchy Configuration</a></li>
+            <li class="aui-nav-selected"><span class="assistive">Current page:</span> Create field</li>
+          </ol>
+          <h1>Create Field</h1>
+        </div>
+      </div>
+      <div class="aui-page-header-actions">
+        <div class="aui-buttons">
+        </div>
+      </div>
+    </header>
+    <div>
+        <ol class="aui-progress-tracker" style="margin: 0 auto">
+          <li class="aui-progress-tracker-step aui-progress-tracker-step-current" style="width:25%"><span>Configure Field</span></li>
+          <li class="aui-progress-tracker-step" style="width:25%"><span>Configure Link</span></li>
+          <li class="aui-progress-tracker-step" style="width:25%"><span>Configure Context</span></li>
+          <li class="aui-progress-tracker-step" style="width:25%"><span>Confirm</span></li>
+        </ol>
+        <form class="aui" method="POST" action="/jira/rest/jira-agile-extended-admin/1.0/hierarchyfield">
+          <div class="field-group">
+            <label for="comment-email">Field Name
+              <span class="aui-icon icon-required">(required)</span></label>
+            <input class="text medium-field" type="text"
+                   id="comment-email" name="comment-email" placeholder="you@example.com">
+            <div class="description">Your
+              primary email address.</div>
+          </div>
+          <div class="field-group">
+            <label for="comment-input">JQL Statement</label>
+            <textarea class="textarea" name="comment-input"
+                      id="comment-input" placeholder="Your comment here..."></textarea>
+          </div>
+          <div class="buttons-container">
+            <div class="buttons">
+              <input class="button submit" type="submit" value="Save" id="comment-save-button">
+              <a class="cancel" href="#">Cancel</a>
+            </div>
+          </div>
+        </form>
+    </div>
+</body>
+</html>

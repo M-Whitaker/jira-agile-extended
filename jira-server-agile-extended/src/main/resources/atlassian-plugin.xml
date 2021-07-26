@@ -15,7 +15,15 @@
     <!--    <startup>early</startup>--> 
   </plugin-info>  
   <!-- add our i18n resource -->  
-  <resource type="i18n" name="i18n" location="jira-server-agile-extended"/>  
+  <resource type="i18n" name="i18n" location="jira-server-agile-extended"/>
+  <ao key="ao-module">
+    <description>The module configuring the Active Objects service used by this plugin</description>
+    <entity>uk.co.mattwhitaker.atlassian.jiraserveragileextended.ao.HierarchyFieldSettings</entity>
+    <entity>uk.co.mattwhitaker.atlassian.jiraserveragileextended.ao.CustomField</entity>
+    <entity>uk.co.mattwhitaker.atlassian.jiraserveragileextended.ao.IssueLink</entity>
+    <entity>uk.co.mattwhitaker.atlassian.jiraserveragileextended.ao.IssueType</entity>
+    <entity>uk.co.mattwhitaker.atlassian.jiraserveragileextended.ao.Project</entity>
+  </ao>
   <!-- add our event listeners -->  
   <!-- add our web resources -->  
   <web-resource key="jira-server-agile-extended-resources" name="jira-server-agile-extended Web Resources"> 
@@ -70,7 +78,7 @@
   <!-- admin ui -->  
   <servlet name="JAE Hierarchy Admin Servlet" i18n-name-key="jae-hierarchy-admin-servlet.name" key="jae-hierarchy-admin-servlet" class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.admin.HierarchyAdminServlet">
     <description key="jae-hierarchy-admin-servlet.description">The Admin Servlet Plugin</description>
-    <url-pattern>/jiraagileextended/admin/hierarchy</url-pattern>
+    <url-pattern>/jiraagileextended/admin/hierarchy*</url-pattern>
   </servlet>
   <servlet name="JAE Backlog Admin Servlet" i18n-name-key="jae-backlog-admin-servlet.name" key="jae-backlog-admin-servlet" class="uk.co.mattwhitaker.atlassian.jiraserveragileextended.admin.BacklogAdminServlet">
     <description key="jae-backlog-admin-servlet.description">The Admin Servlet Plugin</description>
@@ -93,8 +101,9 @@
   <web-resource key="jae-hierarchy-admin-resources" name="jira-server-agile-extended Hierarchy Admin Web Resources">
     <dependency>com.atlassian.auiplugin:ajs</dependency>  
     <dependency>com.atlassian.auiplugin:aui-restfultable</dependency>  
-    <dependency>com.atlassian.auiplugin:aui-dialog2</dependency>  
-    <resource type="download" name="HierarchyFieldConfiguration.js" location="/static/dist/HierarchyFieldConfiguration.js"/> 
+    <dependency>com.atlassian.auiplugin:aui-dialog2</dependency>
+    <dependency>com.atlassian.auiplugin:aui-progress-tracker</dependency>
+    <resource type="download" name="HierarchyFieldConfiguration.js" location="/static/dist/HierarchyFieldConfiguration.js"/>
   </web-resource>
   <web-resource key="jae-backlog-admin-resources" name="jira-server-agile-extended Backlog Admin Web Resources">
     <dependency>com.atlassian.auiplugin:ajs</dependency>

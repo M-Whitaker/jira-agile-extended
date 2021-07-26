@@ -1,6 +1,5 @@
 package uk.co.mattwhitaker.atlassian.jiraserveragileextended.service;
 
-import com.almworks.jira.structure.api.auth.AuthContext.Custom;
 import com.atlassian.jira.bc.ServiceOutcome;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.managedconfiguration.ConfigurationItemAccessLevel;
@@ -14,12 +13,20 @@ import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.context.JiraContextNode;
 import com.atlassian.jira.issue.customfields.CustomFieldSearcher;
 import com.atlassian.jira.issue.customfields.CustomFieldType;
+import com.atlassian.jira.issue.customfields.CustomFieldUtils;
 import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.issue.fields.config.FieldConfig;
+import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
+import com.atlassian.jira.issue.fields.config.manager.FieldConfigManager;
+import com.atlassian.jira.issue.fields.config.manager.FieldConfigSchemeManager;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.issue.link.IssueLinkType;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.ofbiz.core.entity.GenericEntityException;
@@ -27,8 +34,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.admin.HierarchyFieldAdminResource.HierarchyFieldConfigBean;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.admin.HierarchyFieldAdminResource.HierarchyFieldConfigEditBean;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.customfield.HierarchyLinkField;
-import uk.co.mattwhitaker.atlassian.jiraserveragileextended.issuelink.HierarchyIssueLinkType;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.model.IssueTypeBean;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.model.ProjectBean;
 
 @Service
 public class JAECustomFieldManager {
@@ -37,22 +47,30 @@ public class JAECustomFieldManager {
 
   private static final String KEY_DEFAULT_CUSTOMFIELD_ID_TEMPLATE = "JiraAgileExtended.CustomField.Default.%s.id";
   public final IssueManager issueManager;
+
+  private static final String CUSTOMFIELD_DESCRIPTION_TEMPLATE = "%s field for Jira Agile Extended use only.";
   private final CustomFieldManager customFieldManager;
+  private final FieldConfigManager fieldConfigManager;
+  private final FieldConfigSchemeManager fieldConfigSchemeManager;
   private final ManagedConfigurationItemService managedConfigurationItemService;
   private final PropertyDao propertyDao;
-  private final HierarchyIssueLinkType hierarchyIssueLinkType;
+  private final HierarchyLinkTypeManager hierarchyLinkTypeManager;
 
   @Autowired
   public JAECustomFieldManager(@ComponentImport CustomFieldManager customFieldManager,
       @ComponentImport IssueManager issueManager,
+      @ComponentImport FieldConfigManager fieldConfigManager,
+      @ComponentImport FieldConfigSchemeManager fieldConfigSchemeManager,
       @ComponentImport ManagedConfigurationItemService managedConfigurationItemService,
       @Autowired PropertyDao propertyDao,
-      @Autowired HierarchyIssueLinkType hierarchyIssueLinkType) {
+      @Autowired HierarchyLinkTypeManager hierarchyLinkTypeManager) {
     this.customFieldManager = customFieldManager;
     this.issueManager = issueManager;
+    this.fieldConfigManager = fieldConfigManager;
+    this.fieldConfigSchemeManager = fieldConfigSchemeManager;
     this.managedConfigurationItemService = managedConfigurationItemService;
     this.propertyDao = propertyDao;
-    this.hierarchyIssueLinkType = hierarchyIssueLinkType;
+    this.hierarchyLinkTypeManager = hierarchyLinkTypeManager;
   }
 
   public List<CustomField> getHierarchyFields(Issue issue) {
@@ -114,7 +132,8 @@ public class JAECustomFieldManager {
           String.format(KEY_DEFAULT_CUSTOMFIELD_ID_TEMPLATE, name.replaceAll("\\s", "")),
           field.getIdAsLong());
       // TODO: Create link type for field
-      IssueLinkType hierarchyLink = hierarchyIssueLinkType.getOrCreateHierarchyLinkType(name, outwardLink, inwardLink);
+      IssueLinkType hierarchyLink = hierarchyLinkTypeManager.getOrCreateHierarchyLinkType(name,
+          outwardLink, inwardLink);
       log.info("Locking field: " + field.getFieldName());
       lock(field);
       return field;
@@ -125,19 +144,54 @@ public class JAECustomFieldManager {
     }
   }
 
-  private void deleteHierarchyField(String name) throws IllegalArgumentException {
+  public void deleteHierarchyField(String name) throws RemoveException {
     Collection<CustomField> customFields = customFieldManager.getCustomFieldObjectsByName(name);
-    // TODO: Remove link type for field
 
     for (CustomField customField : customFields) {
-      try {
-        System.out.println(customField.getDescription());
-        // TODO: Check if the field type still exists
-        customFieldManager.removeCustomField(customField);
-      } catch (RemoveException exception) {
-        System.out.println(exception.getMessage());
-      }
+      customFieldManager.removeCustomField(customField);
+      hierarchyLinkTypeManager.deleteLinkTypeByName(customField.getFieldName(), null);
     }
+
+  }
+
+  public void editHierarchyField(CustomField customfield,
+      HierarchyFieldConfigEditBean configBean) {
+    //TODO: Edit custom field name & link name
+    CustomFieldSearcher customFieldSearcher = customFieldManager.getCustomFieldSearcher(
+        "com.atlassian.jira.plugin.system.customfieldtypes:exacttextsearcher");
+    customFieldManager.updateCustomField(customfield.getIdAsLong(),
+        customfield.getFieldName(),
+        String.format(CUSTOMFIELD_DESCRIPTION_TEMPLATE, customfield.getFieldName()),
+        customFieldSearcher);
+    hierarchyLinkTypeManager.editLinkType(
+        hierarchyLinkTypeManager.getHierarchyLinkTypeByName(customfield.getFieldName()),
+        configBean);
+  }
+
+  public void editHierarchyFieldConfigurationContext(CustomField customfield,
+      HierarchyFieldConfigBean configBean) {
+    List<FieldConfigScheme> configSchemes = customfield.getConfigurationSchemes();
+    if (configSchemes.size() != 1) {
+      throw new RuntimeException("There should be only one config!!!");
+    }
+    FieldConfigScheme scheme = configSchemes.get(0);
+    List<Long> projects = new ArrayList<>();
+    for (ProjectBean project : configBean.getProjects()) {
+      projects.add(project.getId());
+    }
+    List<JiraContextNode> context = CustomFieldUtils.buildJiraIssueContexts(false,
+        projects.toArray(new Long[0]),
+        ComponentAccessor.getProjectManager());
+
+    FieldConfigScheme.Builder builder = new FieldConfigScheme.Builder(scheme);
+    FieldConfig config = fieldConfigManager.getFieldConfig(scheme.getId());
+    Map<String, FieldConfig> configs = new HashMap<>();
+    for (IssueTypeBean issueType : configBean.getIssueTypes()) {
+      configs.put(String.valueOf(issueType.getId()), config);
+    }
+    builder.setConfigs(configs);
+    scheme = builder.toFieldConfigScheme();
+    fieldConfigSchemeManager.updateFieldConfigScheme(scheme, context, customfield);
   }
 
   private CustomField generateCustomField(String name) throws GenericEntityException {
@@ -160,7 +214,7 @@ public class JAECustomFieldManager {
     CustomFieldType customFieldType = customFieldManager.getCustomFieldType(type);
     CustomFieldSearcher customFieldSearcher = customFieldManager.getCustomFieldSearcher(searcher);
     return customFieldManager.createCustomField(
-        name, name + " field for Jira Agile Extended use only.", customFieldType,
+        name, String.format(CUSTOMFIELD_DESCRIPTION_TEMPLATE, name), customFieldType,
         customFieldSearcher,
         contexts, issueTypes);
   }

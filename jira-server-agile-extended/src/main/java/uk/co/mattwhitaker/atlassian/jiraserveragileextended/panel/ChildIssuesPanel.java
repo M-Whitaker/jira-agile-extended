@@ -11,8 +11,8 @@ import com.atlassian.jira.user.ApplicationUser;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import uk.co.mattwhitaker.atlassian.jiraserveragileextended.issuelink.HierarchyIssueLinkType;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.model.LinkType;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.service.HierarchyLinkTypeManager;
 
 public class ChildIssuesPanel extends AbstractJiraContextProvider {
 
@@ -35,7 +35,7 @@ public class ChildIssuesPanel extends AbstractJiraContextProvider {
     for (IssueLinkType issueLinkType : issueLinks.getLinkTypes()) {
       String issueLinkTypeStyle = issueLinkType.getStyle();
       if (issueLinkTypeStyle != null) {
-        if (issueLinkTypeStyle.equals(HierarchyIssueLinkType.LINK_STYLE)) {
+        if (issueLinkTypeStyle.equals(HierarchyLinkTypeManager.LINK_STYLE)) {
           List<Issue> issues = issueLinks.getInwardIssues(issueLinkType.getName());
           if (issues != null) {
             for (Issue issue : issues) {

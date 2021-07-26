@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.service.HierarchyLinkManager;
-import uk.co.mattwhitaker.atlassian.jiraserveragileextended.issuelink.HierarchyIssueLinkType;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.service.HierarchyLinkTypeManager;
 
 public class HierarchyExtender extends AbstractGenerator.Extender {
   private static final String ISSUE_LINK_PARAMETER = "hierarchyLinkTypes";
@@ -72,7 +72,7 @@ public class HierarchyExtender extends AbstractGenerator.Extender {
   public void addDefaultFormParameters(@NotNull Map<String, Object> form)
       throws GeneratorUnavailableException {
     List<IssueLinkType> issueLinkTypes = new ArrayList<>(
-        issueLinkTypeManager.getIssueLinkTypesByStyle(HierarchyIssueLinkType.LINK_STYLE));
+        issueLinkTypeManager.getIssueLinkTypesByStyle(HierarchyLinkTypeManager.LINK_STYLE));
     form.put(ISSUE_LINK_PARAMETER, issueLinkTypes);
   }
 
@@ -81,7 +81,7 @@ public class HierarchyExtender extends AbstractGenerator.Extender {
       @NotNull Map<String, Object> parameters, @NotNull Map<String, Object> form)
       throws GeneratorUnavailableException {
     List<IssueLinkType> issueLinkTypes = new ArrayList<>(
-        issueLinkTypeManager.getIssueLinkTypesByStyle(HierarchyIssueLinkType.LINK_STYLE));
+        issueLinkTypeManager.getIssueLinkTypesByStyle(HierarchyLinkTypeManager.LINK_STYLE));
     form.put(ISSUE_LINK_PARAMETER, issueLinkTypes);
   }
 

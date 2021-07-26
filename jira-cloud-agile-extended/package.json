@@ -21,8 +21,6 @@
     "@babel/preset-env": "^7.14.7",
     "babel-loader": "^8.2.2",
     "css-loader": "^5.2.6",
-    "image-webpack-loader": "^7.0.1",
-    "node-sass": "^6.0.1",
     "sass-loader": "^12.1.0",
     "style-loader": "^3.0.0",
     "webpack": "^5.43.0",

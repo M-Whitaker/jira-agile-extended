@@ -11,14 +11,15 @@ import com.atlassian.jira.user.ApplicationUser;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.co.mattwhitaker.atlassian.jiraserveragileextended.issuelink.HierarchyIssueLinkType;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.service.HierarchyLinkTypeManager;
 
 public class ChildIssuesPanelCondition extends AbstractWebCondition {
 
-  private final HierarchyIssueLinkType hierarchyIssueLinkType;
+  private final HierarchyLinkTypeManager hierarchyLinkTypeManager;
 
-  public ChildIssuesPanelCondition(@Autowired HierarchyIssueLinkType hierarchyIssueLinkType) {
-    this.hierarchyIssueLinkType = hierarchyIssueLinkType;
+  public ChildIssuesPanelCondition(
+      @Autowired HierarchyLinkTypeManager hierarchyLinkTypeManager) {
+    this.hierarchyLinkTypeManager = hierarchyLinkTypeManager;
   }
 
   /**
@@ -34,7 +35,7 @@ public class ChildIssuesPanelCondition extends AbstractWebCondition {
     IssueLinkManager issueLinkManager = ComponentAccessor.getIssueLinkManager();
 
     List<IssueLink> childIssues = new ArrayList<>();
-    List<IssueLinkType> hierarchyLinks = hierarchyIssueLinkType.getHierarchyLinkTypes();
+    List<IssueLinkType> hierarchyLinks = hierarchyLinkTypeManager.getHierarchyLinkTypes();
     if (!hierarchyLinks.isEmpty()) {
       for (IssueLinkType hierarchyLink : hierarchyLinks) {
         issueLinkManager.getIssueLinks(hierarchyLink.getId()).forEach(issueLink -> {

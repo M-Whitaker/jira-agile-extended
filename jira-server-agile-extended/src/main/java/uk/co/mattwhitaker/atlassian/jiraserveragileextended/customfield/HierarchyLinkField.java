@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.ao.HierarchyFieldSettingsService;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.service.HierarchyLinkManager;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.service.PluginInitializer;
 
@@ -32,6 +33,7 @@ public class HierarchyLinkField extends GenericTextCFType {
 
   private final HierarchyLinkManager hierarchyLinkManager;
   private final JiraAuthenticationContext jiraAuthenticationContext;
+  private final HierarchyFieldSettingsService hierarchyFieldSettingsService;
   private final HttpContext httpContext;
 
 
@@ -41,11 +43,13 @@ public class HierarchyLinkField extends GenericTextCFType {
       @JiraImport TextFieldCharacterLengthValidator textFieldCharacterLengthValidator,
       @JiraImport JiraAuthenticationContext jiraAuthenticationContext,
       @Autowired HierarchyLinkManager hierarchyLinkManager,
+      @Autowired HierarchyFieldSettingsService hierarchyFieldSettingsService,
       @ComponentImport HttpContext httpContext) {
     super(customFieldValuePersister, genericConfigManager, textFieldCharacterLengthValidator,
         jiraAuthenticationContext);
     this.hierarchyLinkManager = hierarchyLinkManager;
     this.jiraAuthenticationContext = jiraAuthenticationContext;
+    this.hierarchyFieldSettingsService = hierarchyFieldSettingsService;
     this.httpContext = httpContext;
   }
 
@@ -54,7 +58,8 @@ public class HierarchyLinkField extends GenericTextCFType {
   public Map<String, Object> getVelocityParameters(Issue issue, CustomField field,
       FieldLayoutItem fieldLayoutItem) {
     Map<String, Object> params = super.getVelocityParameters(issue, field, fieldLayoutItem);
-
+    if (issue == null)
+      return params;
     String baseUrl = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
     IssueManager issueManager = ComponentAccessor.getIssueManager();
 
@@ -67,6 +72,9 @@ public class HierarchyLinkField extends GenericTextCFType {
           .put("destinationIssueIconDescription", destinationIssue.getIssueType().getDescription());
       params.put("destinationIssueSummary", destinationIssue.getSummary());
     }
+    params.put("jqlStatement",
+        hierarchyFieldSettingsService.getFieldSettings(field.getIdAsLong()).getJqlStatement());
+    params.put("issue", issue);
     return params;
   }
 
@@ -105,8 +113,6 @@ public class HierarchyLinkField extends GenericTextCFType {
       }
     }
   }
-
-  //TODO: Error on default value
 
   @Override
   public void validateFromParams(CustomFieldParams relevantParams,

@@ -1,7 +1,10 @@
-package uk.co.mattwhitaker.atlassian.jiraserveragileextended.issuelink;
+package uk.co.mattwhitaker.atlassian.jiraserveragileextended.service;
 
+import com.atlassian.jira.exception.RemoveException;
 import com.atlassian.jira.issue.link.IssueLinkType;
+import com.atlassian.jira.issue.link.IssueLinkTypeDestroyer;
 import com.atlassian.jira.issue.link.IssueLinkTypeManager;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,23 +15,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.co.mattwhitaker.atlassian.jiraserveragileextended.service.PropertyDao;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.admin.HierarchyFieldAdminResource.HierarchyFieldConfigEditBean;
 
 @Service
-public class HierarchyIssueLinkType {
+public class HierarchyLinkTypeManager {
 
-  private static final Logger log = LoggerFactory.getLogger(HierarchyIssueLinkType.class);
+  private static final Logger log = LoggerFactory.getLogger(HierarchyLinkTypeManager.class);
 
   public static final String KEY_DEFAULT_LINKTYPE_ID_TEMPLATE = "JiraAgileExtended.HierarchyLink.%s.linktype.id";
   public static final String LINK_STYLE = "jira_jae_hierarchy_link";
   private final PropertyDao propertyDao;
   private final IssueLinkTypeManager issueLinkTypeManager;
+  private final IssueLinkTypeDestroyer issueLinkTypeDestroyer;
+  private final JiraAuthenticationContext jiraAuthenticationContext;
 
   @Autowired
-  public HierarchyIssueLinkType(@Autowired PropertyDao propertyDao,
-      @ComponentImport IssueLinkTypeManager issueLinkTypeManager) {
+  public HierarchyLinkTypeManager(@Autowired PropertyDao propertyDao,
+      @ComponentImport IssueLinkTypeManager issueLinkTypeManager,
+      @ComponentImport IssueLinkTypeDestroyer issueLinkTypeDestroyer,
+      @ComponentImport JiraAuthenticationContext jiraAuthenticationContext) {
     this.propertyDao = propertyDao;
     this.issueLinkTypeManager = issueLinkTypeManager;
+    this.issueLinkTypeDestroyer = issueLinkTypeDestroyer;
+    this.jiraAuthenticationContext = jiraAuthenticationContext;
   }
 
   public List<IssueLinkType> getHierarchyLinkTypes() {
@@ -70,5 +79,23 @@ public class HierarchyIssueLinkType {
     propertyDao.setLongProperty(String.format(KEY_DEFAULT_LINKTYPE_ID_TEMPLATE, linkTypeName), linkTypeId);
     log.info("Hierarchy Link Type now exists with ID {}", linkTypeId);
     return hierarchyLinkType.get(0);
+  }
+
+  public void deleteLinkTypeByName(String linkTypeName, IssueLinkType swapLinkType)
+      throws RemoveException {
+    IssueLinkType issueLinkType = getHierarchyLinkType(linkTypeName).orElse(null);
+    if (issueLinkType == null) {
+      throw new RemoveException("Link Type does not exist");
+    }
+    issueLinkTypeDestroyer.removeIssueLinkType(issueLinkType.getId(), null,
+        jiraAuthenticationContext.getLoggedInUser());
+  }
+
+  public void editLinkType(IssueLinkType issueLink, HierarchyFieldConfigEditBean configEditBean) {
+    issueLinkTypeManager.updateIssueLinkType(issueLink,
+        issueLink.getName(), configEditBean.getInwardLink() != null ? configEditBean.getInwardLink()
+            : issueLink.getInward(),
+        configEditBean.getOutwardLink() != null ? configEditBean.getInwardLink()
+            : issueLink.getOutward());
   }
 }

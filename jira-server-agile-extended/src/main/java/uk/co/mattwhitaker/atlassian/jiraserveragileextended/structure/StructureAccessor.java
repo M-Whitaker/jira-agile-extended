@@ -15,21 +15,4 @@ public class StructureAccessor {
     }
     return true;
   }
-
-//    public static ForestSource getForest(long structureId) {
-//        if (!isStructurePresent()) return null;
-//        StructureComponents structureComponents;
-//        try {
-//            structureComponents = ComponentAccessor.getOSGiComponentInstanceOfType(StructureComponents.class);
-//        } catch (Exception e) {
-//            return null;
-//        }
-//
-//
-//        try {
-//            return new ForestAccessor(structureComponents.getForestService().getForestSource(ForestSpec.structure(structureId)));
-//        } catch (StructureException e) {
-//            return null;
-//        }
-//    }
 }

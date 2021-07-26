@@ -46,6 +46,10 @@ public class HierarchyAdminServlet extends HttpServlet {
     }
     Map<String, Object> paramMap = new HashMap<>();
     resp.setContentType("text/html;charset=utf-8");
-    renderer.render("/templates/admin/hierarchy.vm", paramMap, resp.getWriter());
+    if(req.getRequestURI().equals(String.format("%s/plugins/servlet/jiraagileextended/admin/hierarchy/create", req.getContextPath()))) {
+      renderer.render("/templates/admin/hierarchyAdd.vm", paramMap, resp.getWriter());
+    } else {
+      renderer.render("/templates/admin/hierarchy.vm", paramMap, resp.getWriter());
+    }
   }
 }

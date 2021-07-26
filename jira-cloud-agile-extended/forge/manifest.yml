@@ -45,7 +45,7 @@ connectModules:
   ]
 remotes:
   - key: connect
-    baseUrl: https://5ac6f6a27f56.ngrok.io
+    baseUrl: https://{id}.ngrok.io
 permissions:
   scopes: [
       "read:jira-work",

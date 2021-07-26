@@ -17,21 +17,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.co.mattwhitaker.atlassian.jiraserveragileextended.issuelink.HierarchyIssueLinkType;
 
 @Service
 public class HierarchyLinkManager {
 
   private static final Logger log = LoggerFactory.getLogger(HierarchyLinkManager.class);
 
-  private final HierarchyIssueLinkType hierarchyIssueLinkType;
+  private final HierarchyLinkTypeManager hierarchyLinkTypeManager;
   private final IssueLinkManager issueLinkManager;
 
   @Autowired
   public HierarchyLinkManager(
-      @Autowired HierarchyIssueLinkType hierarchyIssueLinkType,
+      @Autowired HierarchyLinkTypeManager hierarchyLinkTypeManager,
       @ComponentImport IssueLinkManager issueLinkManager) {
-    this.hierarchyIssueLinkType = hierarchyIssueLinkType;
+    this.hierarchyLinkTypeManager = hierarchyLinkTypeManager;
     this.issueLinkManager = issueLinkManager;
   }
 
@@ -44,7 +43,8 @@ public class HierarchyLinkManager {
   public void associateIssueWithParent(
       ApplicationUser applicationUser, Issue issue, Issue parentIssue, CustomField field) throws CreateException {
     // Get the CustomField name to get the link type
-    IssueLinkType hierarchyLink = hierarchyIssueLinkType.getHierarchyLinkTypeByName(field.getFieldName());
+    IssueLinkType hierarchyLink = hierarchyLinkTypeManager.getHierarchyLinkTypeByName(
+        field.getFieldName());
     issueLinkManager.createIssueLink(
         issue.getId(), parentIssue.getId(), hierarchyLink.getId(), 0L, applicationUser);
   }
@@ -57,7 +57,8 @@ public class HierarchyLinkManager {
    */
   public void disassociateIssueWithParent(
       ApplicationUser applicationUser, Issue issue, Issue parentIssue, CustomField field) {
-    IssueLinkType hierarchyLink = hierarchyIssueLinkType.getHierarchyLinkTypeByName(field.getFieldName());
+    IssueLinkType hierarchyLink = hierarchyLinkTypeManager.getHierarchyLinkTypeByName(
+        field.getFieldName());
     IssueLink issueLink =
         issueLinkManager.getIssueLink(issue.getId(), parentIssue.getId(), hierarchyLink.getId());
     try {
@@ -101,7 +102,7 @@ public class HierarchyLinkManager {
     for (IssueLinkType issueLinkType : issueLinks.getLinkTypes()) {
       String issueLinkTypeStyle = issueLinkType.getStyle();
       if (issueLinkTypeStyle != null) {
-        if (issueLinkTypeStyle.equals(HierarchyIssueLinkType.LINK_STYLE)) {
+        if (issueLinkTypeStyle.equals(HierarchyLinkTypeManager.LINK_STYLE)) {
           if (linkDirection == LinkDirection.OUTWARD) {
             issues = issueLinks.getOutwardIssues(issueLinkType.getName());
           } else {
