@@ -26,6 +26,12 @@ jobs:
         sudo apt-key add public
         sudo apt-get -y update
         sudo apt-get -y install atlassian-plugin-sdk
+    - name: Cache Maven packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
     - name: build
       run: cd jira-server-agile-extended && atlas-package
     - name: Unit Tests
