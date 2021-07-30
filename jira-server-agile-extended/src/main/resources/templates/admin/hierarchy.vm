@@ -22,9 +22,9 @@
   Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam aliquam vitae lectus quis
   congue. Vestibulum iaculis imperdiet feugiat. Donec at laoreet diam. Duis a sem in.
 </p>
-<button style="float: right;margin-right: 15px" id="create-new-hierarchy-field"
+<a style="float: right;margin-right: 15px" id="create-new-hierarchy-field" href="hierarchy/create"
         class="aui-button aui-button-primary">Create
-</button>
+</a>
 <table id="hierarchy-field-config-table"></table>
 <section
     id="demo-warning-dialog"

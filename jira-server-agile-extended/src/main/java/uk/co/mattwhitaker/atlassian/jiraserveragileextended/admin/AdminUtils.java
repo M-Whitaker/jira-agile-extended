@@ -7,8 +7,12 @@ import java.io.IOException;
 import java.net.URI;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AdminUtils {
+
+  public static final String KEY_JAE_SETTINGS_PROPS = "JiraAgileExtendedSettings.properties";
 
   /**
    * Check if user is a system admin.
@@ -17,11 +21,7 @@ public class AdminUtils {
    */
   public static Boolean checkAuthorized(HttpServletRequest request, UserManager userManager) {
     UserKey userKey = userManager.getRemoteUserKey(request);
-    if (userKey == null || !userManager.isSystemAdmin(userKey)) {
-      return false;
-    } else {
-      return true;
-    }
+    return userKey != null && userManager.isSystemAdmin(userKey);
   }
 
   public static void redirectToLogin(HttpServletRequest request, HttpServletResponse response, LoginUriProvider loginUriProvider)

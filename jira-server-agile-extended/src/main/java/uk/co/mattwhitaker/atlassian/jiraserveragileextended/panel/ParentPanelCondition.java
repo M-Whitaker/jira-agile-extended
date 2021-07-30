@@ -5,6 +5,7 @@ import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.plugin.webfragment.conditions.AbstractWebCondition;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.user.ApplicationUser;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.customfield.HierarchyLinkField;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.service.JAECustomFieldManager;
@@ -26,8 +27,11 @@ public class ParentPanelCondition extends AbstractWebCondition {
   @Override
   public boolean shouldDisplay(ApplicationUser applicationUser, JiraHelper jiraHelper) {
     Issue currentIssue = (Issue) jiraHelper.getContextParams().get("issue");
-    CustomField parentLinkField = jaeCustomFieldManager.getOrCreateHierarchyField("Parent Link",
-        HierarchyLinkField.CUSTOM_FIELD_TYPE);
-    return jaeCustomFieldManager.getIssueFromField(currentIssue, parentLinkField) != null;
+    List<CustomField> hierarchyLinkFields = jaeCustomFieldManager.getHierarchyFields(currentIssue);
+    for (CustomField hierarchyLinkField:hierarchyLinkFields) {
+      if (jaeCustomFieldManager.getIssueFromField(currentIssue, hierarchyLinkField) != null)
+        return true;
+    }
+    return false;
   }
 }

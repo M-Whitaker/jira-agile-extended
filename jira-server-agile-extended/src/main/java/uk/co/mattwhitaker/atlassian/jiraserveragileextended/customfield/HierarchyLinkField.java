@@ -1,6 +1,7 @@
 package uk.co.mattwhitaker.atlassian.jiraserveragileextended.customfield;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.customfields.impl.GenericTextCFType;
@@ -23,6 +24,7 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.ao.HierarchyFieldSettingsService;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.service.HierarchyLinkManager;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.service.PluginInitializer;
 
@@ -31,6 +33,7 @@ public class HierarchyLinkField extends GenericTextCFType {
 
   private final HierarchyLinkManager hierarchyLinkManager;
   private final JiraAuthenticationContext jiraAuthenticationContext;
+  private final HierarchyFieldSettingsService hierarchyFieldSettingsService;
   private final HttpContext httpContext;
 
 
@@ -40,11 +43,13 @@ public class HierarchyLinkField extends GenericTextCFType {
       @JiraImport TextFieldCharacterLengthValidator textFieldCharacterLengthValidator,
       @JiraImport JiraAuthenticationContext jiraAuthenticationContext,
       @Autowired HierarchyLinkManager hierarchyLinkManager,
+      @Autowired HierarchyFieldSettingsService hierarchyFieldSettingsService,
       @ComponentImport HttpContext httpContext) {
     super(customFieldValuePersister, genericConfigManager, textFieldCharacterLengthValidator,
         jiraAuthenticationContext);
     this.hierarchyLinkManager = hierarchyLinkManager;
     this.jiraAuthenticationContext = jiraAuthenticationContext;
+    this.hierarchyFieldSettingsService = hierarchyFieldSettingsService;
     this.httpContext = httpContext;
   }
 
@@ -53,7 +58,8 @@ public class HierarchyLinkField extends GenericTextCFType {
   public Map<String, Object> getVelocityParameters(Issue issue, CustomField field,
       FieldLayoutItem fieldLayoutItem) {
     Map<String, Object> params = super.getVelocityParameters(issue, field, fieldLayoutItem);
-
+    if (issue == null)
+      return params;
     String baseUrl = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
     IssueManager issueManager = ComponentAccessor.getIssueManager();
 
@@ -66,6 +72,9 @@ public class HierarchyLinkField extends GenericTextCFType {
           .put("destinationIssueIconDescription", destinationIssue.getIssueType().getDescription());
       params.put("destinationIssueSummary", destinationIssue.getSummary());
     }
+    params.put("jqlStatement",
+        hierarchyFieldSettingsService.getFieldSettings(field.getIdAsLong()).getJqlStatement());
+    params.put("issue", issue);
     return params;
   }
 
@@ -74,10 +83,13 @@ public class HierarchyLinkField extends GenericTextCFType {
     Preconditions.checkNotNull(issue);
     Preconditions.checkNotNull(parent);
     Issue parentIssue = ComponentAccessor.getIssueManager().getIssueObject(parent);
-    // TODO: Check if link was created...
-    hierarchyLinkManager
-        .associateIssueWithParent(jiraAuthenticationContext.getLoggedInUser(), issue, parentIssue);
-    super.createValue(field, issue, parent);
+    try {
+      hierarchyLinkManager
+          .associateIssueWithParent(jiraAuthenticationContext.getLoggedInUser(), issue, parentIssue, field);
+      super.createValue(field, issue, parent);
+    } catch (CreateException e) {
+      log.error("Failed to create link...");
+    }
   }
 
   @Override
@@ -85,24 +97,21 @@ public class HierarchyLinkField extends GenericTextCFType {
     Preconditions.checkNotNull(issue);
     if (parent == null) {
       hierarchyLinkManager
-          .disassociateParentFromIssue(jiraAuthenticationContext.getLoggedInUser(), issue);
+          .disassociateParentFromIssue(jiraAuthenticationContext.getLoggedInUser(), issue, customField);
+      super.updateValue(customField, issue, null);
     } else {
       hierarchyLinkManager
-          .disassociateParentFromIssue(jiraAuthenticationContext.getLoggedInUser(), issue);
+          .disassociateParentFromIssue(jiraAuthenticationContext.getLoggedInUser(), issue, customField);
       Issue parentIssue = ComponentAccessor.getIssueManager().getIssueObject(parent);
-      hierarchyLinkManager
-          .associateIssueWithParent(jiraAuthenticationContext.getLoggedInUser(), issue,
-              parentIssue);
+      try {
+        hierarchyLinkManager
+            .associateIssueWithParent(jiraAuthenticationContext.getLoggedInUser(), issue,
+                parentIssue, customField);
+        super.updateValue(customField, issue, parent);
+      } catch (CreateException e) {
+        log.error("Failed to create link: " + e.getMessage());
+      }
     }
-    super.updateValue(customField, issue, parent);
-  }
-
-  //TODO: Error on default value
-
-
-  @Override
-  public String getDefaultValue(FieldConfig fieldConfig) {
-    return null;
   }
 
   @Override

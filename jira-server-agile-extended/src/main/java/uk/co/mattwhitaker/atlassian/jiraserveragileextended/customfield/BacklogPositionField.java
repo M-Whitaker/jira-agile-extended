@@ -5,7 +5,6 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.entity.property.EntityProperty;
 import com.atlassian.jira.entity.property.EntityPropertyService.PropertyResult;
 import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.customfields.impl.CalculatedCFType;
 import com.atlassian.jira.issue.customfields.impl.FieldValidationException;
 import com.atlassian.jira.issue.fields.CustomField;
@@ -41,7 +40,6 @@ public class BacklogPositionField extends CalculatedCFType {
   private static final Logger log = LoggerFactory.getLogger(BacklogPositionField.class);
 
   private final JiraAuthenticationContext jiraAuthenticationContext;
-  private final IssueManager issueManager;
   private final IssuePropertyService issuePropertyService;
   private final JqlQueryParser jqlQueryParser;
   private final LuceneSearchProvider searchProvider;
@@ -50,12 +48,10 @@ public class BacklogPositionField extends CalculatedCFType {
   @Autowired
   public BacklogPositionField(@ComponentImport JqlQueryParser jqlQueryParser,
       @ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
-      @ComponentImport IssueManager issueManager,
       @ComponentImport IssuePropertyService issuePropertyService, @Autowired PropertyDao propertyDao) {
     this.jqlQueryParser = jqlQueryParser;
     this.jiraAuthenticationContext = jiraAuthenticationContext;
     this.searchProvider = ComponentAccessor.getComponent(LuceneSearchProvider.class);
-    this.issueManager = issueManager;
     this.issuePropertyService = issuePropertyService;
     this.propertyDao = propertyDao;
   }
@@ -133,13 +129,6 @@ public class BacklogPositionField extends CalculatedCFType {
     } catch (JqlParseException | SearchException e) {
       e.printStackTrace();
     }
-    // ~ 1.5 seconds
-//    for (int i=0; i < issues.size(); i++) {
-//      if (issues.get(i).getDocument().getField("key").stringValue().equals(issue.getKey())) {
-//        backlogPosition = i;
-//        break;
-//      }
-//    }
     return String.format("%d/%d", backlogPosition + 1, numberOfIssues);
   }
 }

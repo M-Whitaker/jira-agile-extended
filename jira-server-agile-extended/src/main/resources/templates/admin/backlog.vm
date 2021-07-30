@@ -17,7 +17,7 @@
   <div class="field-group">
     <label for="client-refresh-freq">Client Refresh Frequency
       <span class="aui-icon icon-required">(required)</span></label>
-    <input class="text small-field" type="text"
+    <input required class="text small-field" type="text"
            id="client-refresh-freq" name="client-refresh-freq" value="$clientRefresh">
     <div class="description">The time in seconds between each fetch of the backlog on the client. Be aware decreasing this value will put more load
       on the client and server.
@@ -26,7 +26,7 @@
   <div class="buttons-container">
     <div class="buttons">
       <input class="button submit" type="submit" value="Save" id="backlog-save-button">
-      <a class="cancel" href="#">Cancel</a>
+      <a class="cancel" type="cancel" onClick="window.location.reload();">Cancel</a>
     </div>
   </div>
 </form>

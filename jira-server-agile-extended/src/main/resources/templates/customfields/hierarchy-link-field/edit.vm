@@ -3,13 +3,15 @@
 #* @vtlvariable name="webResourceManager" type="com.atlassian.plugin.webresource.WebResourceManager" *#
 #* @vtlvariable name="requestContext" type="com.atlassian.jira.util.velocity.VelocityRequestContext" *#
 #* @vtlvariable name="action" type="com.atlassian.jira.web.action.JiraWebActionSupport" *#
+#* @vtlvariable name="issue" type="com.atlassian.jira.issue.Issue" *#
 #* @vtlvariable name="destinationIssueSummary" type="java.lang.String" *#
+#* @vtlvariable name="jqlStatement" type="java.lang.String" *#
 
 #disable_html_escaping()
 #customControlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters $auiparams)
 <head>
-    $webResourceManager.requireResource(
-        "uk.co.mattwhitaker.jira.jira-server-agile-extended:jira-server-agile-extended-hierarchy-link-field-resources")
+  $webResourceManager.requireResource(
+    "uk.co.mattwhitaker.jira.jira-server-agile-extended:jira-server-agile-extended-hierarchy-link-field-resources")
 </head>
 <input class="text long-field" id="$customField.id" name="$customField.id" type="text"/>
 <script type="text/javascript">
@@ -28,14 +30,14 @@
       },
       delay: 250,
       data: function(term, page) {
-        let jqlQueryString = 'project = TEST ';
+        let jqlQueryString = "$jqlStatement";
         let match;
         if (term === '') {
 
         } else if ((match = term.toUpperCase().match(/((([A-Z]{1,10})-?)[A-Z]+-\d+)/g))) {
-          jqlQueryString += 'AND key = ' + match[0].toUpperCase();
+          jqlQueryString += ' AND key = ' + match[0].toUpperCase();
         } else {
-          jqlQueryString += 'AND summary ~ \'' + term + '\'';
+          jqlQueryString += ' AND summary ~ \'' + term + '\'';
         }
         const body = {
           jql: jqlQueryString,
@@ -50,10 +52,12 @@
         page = page || 0;
 
         data.issues.forEach(destIssue => {
-          issues.push({
-            id: destIssue.key,
-            text: `<span> <img src="${destIssue.fields.issuetype.iconUrl}" alt="${destIssue.fields.issuetype.description}"> ${destIssue.key} ${destIssue.fields.summary}</span>`,
-          });
+          if (destIssue.id != $issue.getId()) {
+            issues.push({
+              id: destIssue.key,
+              text: `<span> <img src="${destIssue.fields.issuetype.iconUrl}" alt="${destIssue.fields.issuetype.description}"> ${destIssue.key} ${destIssue.fields.summary}</span>`,
+            });
+          }
         });
         return {
           results: issues,
@@ -66,8 +70,8 @@
   });
       #if ($value)
       AJS.$("#$customField.id").
-      auiSelect2('data', {id: "$!value", text: "$!value $destinationIssueSummary"});
-      AJS.$("#$customField.id").auiSelect2('search', "$!value $destinationIssueSummary");
+      auiSelect2('data', {id: "$!value", text: `$!value $destinationIssueSummary`});
+      AJS.$("#$customField.id").auiSelect2('search', `$!value $destinationIssueSummary`);
       #end
 </script>
 #customControlFooter ($action $customField.id $fieldLayoutItem.fieldDescription $displayParameters $auiparams)

@@ -52,7 +52,8 @@ public class BacklogAdminServlet extends HttpServlet {
       AdminUtils.redirectToLogin(req, resp, loginUriProvider);
     }
     Map<String, Object> paramMap = new HashMap<>();
-    paramMap.put("clientRefresh", propertyDao.getLongProperty(KEY_DEFAULT_BACKLOG_CLIENT_REFRESH));
+    Long clientRefresh = propertyDao.getLongProperty(KEY_DEFAULT_BACKLOG_CLIENT_REFRESH);
+    paramMap.put("clientRefresh", clientRefresh != null ? clientRefresh : 10);
     resp.setContentType("text/html;charset=utf-8");
     renderer.render("/templates/admin/backlog.vm", paramMap, resp.getWriter());
   }

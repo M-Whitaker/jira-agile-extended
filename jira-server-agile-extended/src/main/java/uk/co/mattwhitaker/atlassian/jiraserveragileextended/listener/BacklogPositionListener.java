@@ -1,9 +1,7 @@
 package uk.co.mattwhitaker.atlassian.jiraserveragileextended.listener;
 
-import com.atlassian.greenhopper.api.rank.RankService;
 import com.atlassian.jira.bc.issue.properties.IssuePropertyService;
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.entity.Entity;
 import com.atlassian.jira.entity.property.EntityPropertyService;
 import com.atlassian.jira.entity.property.EntityPropertyService.PropertyResult;
 import com.atlassian.jira.entity.property.EntityPropertyService.SetPropertyValidationResult;
@@ -24,13 +22,10 @@ import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import com.sun.jersey.json.impl.provider.entity.JSONArrayProvider.App;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
 import org.slf4j.Logger;
@@ -43,7 +38,6 @@ public class BacklogPositionListener {
 
   private static final Logger log = LoggerFactory.getLogger(BacklogPositionListener.class);
 
-  private final RankService rankService;
   private final JiraAuthenticationContext jiraAuthenticationContext;
   private final IssueManager issueManager;
   private final IssuePropertyService issuePropertyService;
@@ -51,12 +45,10 @@ public class BacklogPositionListener {
   private final LuceneSearchProvider searchProvider;
 
   @Autowired
-  public BacklogPositionListener(@ComponentImport RankService rankService,
-      @ComponentImport JqlQueryParser jqlQueryParser,
+  public BacklogPositionListener(@ComponentImport JqlQueryParser jqlQueryParser,
       @ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
       @ComponentImport IssueManager issueManager,
       @ComponentImport IssuePropertyService issuePropertyService) {
-    this.rankService = rankService;
     this.jqlQueryParser = jqlQueryParser;
     this.jiraAuthenticationContext = jiraAuthenticationContext;
     this.issueManager = issueManager;

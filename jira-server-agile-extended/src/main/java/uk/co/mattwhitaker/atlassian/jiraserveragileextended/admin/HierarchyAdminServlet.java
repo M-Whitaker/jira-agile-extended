@@ -2,11 +2,9 @@ package uk.co.mattwhitaker.atlassian.jiraserveragileextended.admin;
 
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import java.io.IOException;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServlet;
@@ -48,6 +46,10 @@ public class HierarchyAdminServlet extends HttpServlet {
     }
     Map<String, Object> paramMap = new HashMap<>();
     resp.setContentType("text/html;charset=utf-8");
-    renderer.render("/templates/admin/hierarchy.vm", paramMap, resp.getWriter());
+    if(req.getRequestURI().equals(String.format("%s/plugins/servlet/jiraagileextended/admin/hierarchy/create", req.getContextPath()))) {
+      renderer.render("/templates/admin/hierarchyAdd.vm", paramMap, resp.getWriter());
+    } else {
+      renderer.render("/templates/admin/hierarchy.vm", paramMap, resp.getWriter());
+    }
   }
 }

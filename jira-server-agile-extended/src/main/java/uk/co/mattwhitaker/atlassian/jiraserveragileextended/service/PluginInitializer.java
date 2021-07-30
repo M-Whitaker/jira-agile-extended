@@ -5,7 +5,6 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jira.event.issue.IssueEvent;
 import com.atlassian.jira.event.type.EventType;
 import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.link.IssueLinkTypeManager;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
@@ -16,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.co.mattwhitaker.atlassian.jiraserveragileextended.customfield.HierarchyLinkField;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.listener.BacklogPositionListener;
 
 @ExportAsService({PluginInitializer.class})
@@ -57,9 +55,7 @@ public class PluginInitializer implements InitializingBean, DisposableBean {
    */
   @Override
   public void destroy() {
-    // TODO: Check if disabling and not uninstalling
     System.out.println("------- DELETING " + PLUGIN_KEY + " -------");
-//        pluginFields.deleteField("Parent Link");
     eventPublisher.unregister(this);
   }
 
@@ -72,12 +68,6 @@ public class PluginInitializer implements InitializingBean, DisposableBean {
     String startUpPluginKey = event.getPlugin().getKey();
     if (PLUGIN_KEY.equals(startUpPluginKey)) {
       log.info("Starting " + PLUGIN_KEY + "...");
-      try {
-        CustomField customField = jaeCustomFieldManager.getOrCreateHierarchyField("Parent Link",
-            HierarchyLinkField.CUSTOM_FIELD_TYPE);
-      } catch (IllegalArgumentException error) {
-        log.error(error.getMessage());
-      }
       issueLinkTypeManager.getIssueLinkTypes(false).forEach((n) -> {
         log.debug(n.getName() + " " + "is system: " + n.isSystemLinkType());
       });
