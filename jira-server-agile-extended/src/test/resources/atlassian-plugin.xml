@@ -1,14 +1,21 @@
-<atlassian-plugin key="${project.groupId}.${project.artifactId}-tests" name="${project.name}" plugins-version="2">
-    <plugin-info>
-        <description>${project.description}</description>
-        <version>${project.version}</version>
-        <vendor name="${project.organization.name}" url="${project.organization.url}" />
-    </plugin-info>
+<atlassian-plugin key="${project.groupId}.${project.artifactId}-tests" name="${project.name}"
+  plugins-version="2">
+  <plugin-info>
+    <description>${project.description}</description>
+    <version>${project.version}</version>
+    <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+  </plugin-info>
 
-    <!-- from our base plugin -->
-    <component-import key="myComponent" interface="uk.co.mattwhitaker.atlassian.jiraserveragileextended.api.MyPluginComponent"/>
+  <!-- from our base plugin -->
+  <component-import key="myComponent"
+    interface="uk.co.mattwhitaker.atlassian.jiraserveragileextended.api.MyPluginComponent"/>
 
-    <!-- from the product container -->
-    <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties" />
-    
+  <!-- from the product container -->
+  <component-import key="applicationProperties"
+    interface="com.atlassian.sal.api.ApplicationProperties"/>
+  <component-import key="projectManager" interface="com.atlassian.jira.project.ProjectManager"/>
+  <component-import key="issueManager" interface="com.atlassian.jira.issue.IssueManager"/>
+  <component-import key="jiraAuthenticationContext"
+    interface="com.atlassian.jira.security.JiraAuthenticationContext"/>
+
 </atlassian-plugin>

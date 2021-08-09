@@ -25,22 +25,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.atlassian.activeobjects</groupId>
-      <artifactId>activeobjects-plugin</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.collections</groupId>
-      <artifactId>google-collections</artifactId>
-      <version>1.0</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
       <artifactId>xstream</artifactId>
       <version>1.4.17</version>
@@ -61,28 +45,28 @@
       <artifactId>httpclient</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.atlassian.activeobjects</groupId>
-      <artifactId>activeobjects-test</artifactId>
-      <scope>test</scope>
-    </dependency>
 
     <!-- Atlassian Dependencies -->
     <dependency>
       <groupId>com.atlassian.jira</groupId>
       <artifactId>jira-core</artifactId>
-      <version>${jira.version}</version>
+      <version>${jira.compile.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.atlassian.jira.plugins</groupId>
       <artifactId>jira-greenhopper-api</artifactId>
-      <version>${jira.version}</version>
+      <version>8.13.8</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.atlassian.sal</groupId>
       <artifactId>sal-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.atlassian.activeobjects</groupId>
+      <artifactId>activeobjects-plugin</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -115,11 +99,22 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- WIRED TEST RUNNER DEPENDENCIES -->
+    <!-- TEST RUNNER DEPENDENCIES -->
     <dependency>
       <groupId>com.atlassian.plugins</groupId>
       <artifactId>atlassian-plugins-osgi-testrunner</artifactId>
       <version>${plugin.testrunner.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-client</artifactId>
+      <version>1.8-atlassian-11</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -134,16 +129,53 @@
       <version>2.2.2-atlassian-1</version>
     </dependency>
     <dependency>
-        <groupId>com.atlassian.jira.tests</groupId>
-        <artifactId>jira-testkit-client</artifactId>
-        <version>${testkit.version}</version>
-        <scope>test</scope>
-        <exclusions>
-          <exclusion>
-            <groupId>junit</groupId>
-            <artifactId>junit-dep</artifactId>
-          </exclusion>
-        </exclusions>
+      <groupId>com.atlassian.activeobjects</groupId>
+      <artifactId>activeobjects-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.atlassian.jira</groupId>
+      <artifactId>atlassian-jira-pageobjects</artifactId>
+      <version>${jira.pageobjects.version}</version>
+      <exclusions>
+        <!-- excluded due to clash with other SLF implementation -->
+        <exclusion>
+          <artifactId>slf4j-simple</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+      </exclusions>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.adaptavist.arquillian.atlassian</groupId>
+      <artifactId>remote-atlas-container</artifactId>
+      <version>${arquillian.atlas.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.adaptavist.fixtures</groupId>
+      <artifactId>fixtures-core</artifactId>
+      <version>1.3.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.graphene</groupId>
+      <artifactId>graphene-webdriver</artifactId>
+      <version>${arquillian.graphene.version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.adaptavist.fixtures</groupId>
+      <artifactId>fixtures-jira-server</artifactId>
+      <version>0.0.6</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -163,9 +195,39 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.selenium</groupId>
+        <artifactId>selenium-bom</artifactId>
+        <version>${selenium.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>arquillian-bom</artifactId>
+        <version>${arquillian.junit.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-drone-bom</artifactId>
+        <version>${arquillian.drone.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <build>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+      <testResource>
+        <directory>src/test/xml</directory>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>com.atlassian.maven.plugins</groupId>
@@ -173,6 +235,7 @@
         <version>${amps.version}</version>
         <extensions>true</extensions>
         <configuration>
+          <server>localhost</server>
           <enableQuickReload>true</enableQuickReload>
           <products>
             <product>
@@ -185,6 +248,11 @@
               <instanceId>jira</instanceId>
               <version>${jira.version}</version>
               <productDataVersion>${jira.version}</productDataVersion>
+              <systemPropertyVariables>
+                <jira.websudo.is.disabled>true</jira.websudo.is.disabled>
+                <atlassian.darkfeature.jira.onboarding.feature.disabled>true
+                </atlassian.darkfeature.jira.onboarding.feature.disabled>
+              </systemPropertyVariables>
               <applications>
                 <application>
                   <applicationKey>jira-software</applicationKey>
@@ -198,16 +266,16 @@
               <version>${confluence.version}</version>
             </product>
           </products>
-          <testGroups>
-            <testGroup>
-              <id>jira-wired-integration</id>
-              <productIds>
-                <productId>jira</productId>
-              </productIds>
-              <includes>
-                <include>it/**/*WiredTest.java</include>
-              </includes>
-            </testGroup>
+          <testGroups>\
+            <!--            <testGroup>-->
+            <!--              <id>jira-wired-integration</id>-->
+            <!--              <productIds>-->
+            <!--                <productId>jira</productId>-->
+            <!--              </productIds>-->
+            <!--              <includes>-->
+            <!--                <include>it/**/*WiredTest.java</include>-->
+            <!--              </includes>-->
+            <!--            </testGroup>-->
             <testGroup>
               <id>jira-traditional-integration</id>
               <productIds>
@@ -218,13 +286,6 @@
               </includes>
             </testGroup>
           </testGroups>
-          <pluginArtifacts>
-            <pluginArtifact>
-                <groupId>com.atlassian.jira.tests</groupId>
-                <artifactId>jira-testkit-plugin</artifactId>
-                <version>${testkit.version}</version>
-            </pluginArtifact>
-          </pluginArtifacts>
           <!-- See here for an explanation of default instructions: -->
           <!-- https://developer.atlassian.com/docs/advanced-topics/configuration-of-instructions-in-atlassian-plugins -->
           <instructions>
@@ -264,20 +325,69 @@
     </plugins>
   </build>
   <properties>
+    <java.level>8</java.level>
     <platform.version>5.0.0</platform.version>
     <refapp.version>5.0.0</refapp.version>
+    <!-- this is the version we will run integration tests against -->
     <jira.version>8.13.8</jira.version>
+    <testkit.version>8.1.29</testkit.version>
+    <reactive.extension.version>1.0.0</reactive.extension.version>
+
+    <!-- This is the version the plugin is compiled against -->
+    <jira.compile.version>${jira.version}</jira.compile.version>
+
+    <jira.pageobjects.version>${jira.version}</jira.pageobjects.version>
+
+    <jira.data.version>${jira.version}</jira.data.version>
+    <jira-project-config.version>${jira.version}</jira-project-config.version>
+    <triggers.version>2.3.8</triggers.version>
+    <httpclient.version>0.15.0</httpclient.version>
+    <httpclient-core.version>4.3.2</httpclient-core.version>
     <confluence.version>7.4.9</confluence.version>
     <structure.api.version>17.1.0</structure.api.version>
     <amps.version>8.1.2</amps.version>
     <plugin.testrunner.version>2.0.2</plugin.testrunner.version>
+    <!-- Test dependency versions -->
+    <selenium.version>3.13.0</selenium.version>
+    <arquillian.drone.version>2.0.0.Final</arquillian.drone.version>
+    <arquillian.graphene.version>2.3.2</arquillian.graphene.version>
+    <arquillian.junit.version>1.6.0.Final</arquillian.junit.version>
+    <arquillian.atlas.version>3.5.2</arquillian.atlas.version>
+    <browser>firefox</browser>
+
+    <webdriver.chrome.driver>/usr/local/bin/chromedriver</webdriver.chrome.driver>
+    <!--    <xvfb.enable>true</xvfb.enable>-->
     <atlassian.spring.scanner.version>2.1.7</atlassian.spring.scanner.version>
     <!-- This property ensures consistency between the key in atlassian-plugin.xml and the OSGi bundle's key. -->
     <atlassian.plugin.key>${project.groupId}.${project.artifactId}</atlassian.plugin.key>
-    <!-- TestKit version 8.1.x for JIRA 8.1.x -->
-    <testkit.version>8.1.28</testkit.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
+  <repositories>
+    <repository>
+      <id>atlassian-public</id>
+      <url>https://maven.atlassian.com/repository/public</url>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <checksumPolicy>warn</checksumPolicy>
+      </releases>
+    </repository>
+    <repository>
+      <id>adaptavist-external</id>
+      <url>https://nexus.adaptavist.com/content/repositories/external</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <checksumPolicy>fail</checksumPolicy>
+      </releases>
+    </repository>
+  </repositories>
 </project>

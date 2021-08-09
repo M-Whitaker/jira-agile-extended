@@ -12,6 +12,11 @@
       <option name="url" value="https://repo.maven.apache.org/maven2" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="adaptavist-external" />
+      <option name="name" value="adaptavist-external" />
+      <option name="url" value="https://nexus.adaptavist.com/content/repositories/external" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="atlassian-plugin-sdk" />
       <option name="name" value="atlassian-plugin-sdk" />
       <option name="url" value="file://${env.ATLAS_HOME}/repository" />

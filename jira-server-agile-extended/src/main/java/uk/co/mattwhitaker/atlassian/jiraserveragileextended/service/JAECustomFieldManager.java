@@ -46,7 +46,7 @@ public class JAECustomFieldManager {
   private static final Logger log = LoggerFactory.getLogger(JAECustomFieldManager.class);
 
   private static final String KEY_DEFAULT_CUSTOMFIELD_ID_TEMPLATE = "JiraAgileExtended.CustomField.Default.%s.id";
-  public final IssueManager issueManager;
+  private final IssueManager issueManager;
 
   private static final String CUSTOMFIELD_DESCRIPTION_TEMPLATE = "%s field for Jira Agile Extended use only.";
   private final CustomFieldManager customFieldManager;
