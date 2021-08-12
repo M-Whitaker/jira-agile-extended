@@ -24,7 +24,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.jboss.arquillian.graphene.Graphene.guardAjax;
 import static org.jboss.arquillian.graphene.Graphene.guardHttp;
 
 import com.adaptavist.arquillian.atlassian.remote.container.AtlassianApplication;
@@ -61,7 +60,7 @@ public class LoginPage {
             case JIRA:
                 if (browser.getCurrentUrl().contains("Dashboard.jspa")) {
                     // JIRA posts an XHR request to login when on the Dashboard, and then redirects the browser
-                    guardAjax(guardHttp(login)).click();
+                    guardHttp(login).click();
                     break;
                 }
                 // Otherwise fall thru to default login handling

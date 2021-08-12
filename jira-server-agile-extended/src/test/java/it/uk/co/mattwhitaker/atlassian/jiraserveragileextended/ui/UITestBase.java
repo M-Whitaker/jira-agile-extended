@@ -1,6 +1,6 @@
 package it.uk.co.mattwhitaker.atlassian.jiraserveragileextended.ui;
 
-import com.atlassian.pageobjects.page.LoginPage;
+import it.uk.co.mattwhitaker.atlassian.jiraserveragileextended.pageobjects.LoginPage;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.shrinkwrap.api.Archive;

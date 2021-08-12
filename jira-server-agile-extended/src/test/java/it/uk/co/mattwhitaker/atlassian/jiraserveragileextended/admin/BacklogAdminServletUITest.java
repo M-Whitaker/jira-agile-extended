@@ -29,6 +29,7 @@ public class BacklogAdminServletUITest extends UITestBase {
     @RunAsClient
     @InSequence(20)
     public void thenBacklogAdminPageShouldBeAccessible(@InitialPage BacklogAdminPage backlogAdminPage) throws Exception {
-        assertThat("Expected to see a title", backlogAdminPage.getPageTitle(), is(equalTo("Backlog osition")));
+        assertThat("Expected to see a title", backlogAdminPage.getPageTitle(),
+            is(equalTo("Backlog Admin")));
     }
 }

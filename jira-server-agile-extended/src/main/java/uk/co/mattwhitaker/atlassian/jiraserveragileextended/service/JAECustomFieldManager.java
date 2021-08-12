@@ -36,7 +36,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.admin.HierarchyFieldAdminResource.HierarchyFieldConfigBean;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.admin.HierarchyFieldAdminResource.HierarchyFieldConfigEditBean;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.ao.HierarchyFieldSettings;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.ao.HierarchyFieldSettingsService;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.customfield.HierarchyLinkField;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.model.CustomFieldBean;
+import uk.co.mattwhitaker.atlassian.jiraserveragileextended.model.IssueLinkBean;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.model.IssueTypeBean;
 import uk.co.mattwhitaker.atlassian.jiraserveragileextended.model.ProjectBean;
 
@@ -55,6 +59,7 @@ public class JAECustomFieldManager {
   private final ManagedConfigurationItemService managedConfigurationItemService;
   private final PropertyDao propertyDao;
   private final HierarchyLinkTypeManager hierarchyLinkTypeManager;
+  private final HierarchyFieldSettingsService hierarchyFieldSettingsService;
 
   @Autowired
   public JAECustomFieldManager(@ComponentImport CustomFieldManager customFieldManager,
@@ -63,7 +68,8 @@ public class JAECustomFieldManager {
       @ComponentImport FieldConfigSchemeManager fieldConfigSchemeManager,
       @ComponentImport ManagedConfigurationItemService managedConfigurationItemService,
       @Autowired PropertyDao propertyDao,
-      @Autowired HierarchyLinkTypeManager hierarchyLinkTypeManager) {
+      @Autowired HierarchyLinkTypeManager hierarchyLinkTypeManager,
+      @Autowired HierarchyFieldSettingsService hierarchyFieldSettingsService) {
     this.customFieldManager = customFieldManager;
     this.issueManager = issueManager;
     this.fieldConfigManager = fieldConfigManager;
@@ -71,6 +77,7 @@ public class JAECustomFieldManager {
     this.managedConfigurationItemService = managedConfigurationItemService;
     this.propertyDao = propertyDao;
     this.hierarchyLinkTypeManager = hierarchyLinkTypeManager;
+    this.hierarchyFieldSettingsService = hierarchyFieldSettingsService;
   }
 
   public List<CustomField> getHierarchyFields(Issue issue) {
@@ -136,6 +143,17 @@ public class JAECustomFieldManager {
           outwardLink, inwardLink);
       log.info("Locking field: " + field.getFieldName());
       lock(field);
+      // TODO: Add field to config database
+      HierarchyFieldSettings hierarchyFieldSettings = hierarchyFieldSettingsService
+          .addFieldSettings(field.getIdAsLong(),
+              new CustomFieldBean(field.getId(), field.getIdAsLong(), field.getName()),
+              new ArrayList<>(),
+              new ArrayList<>(),
+              new IssueLinkBean(String.valueOf(hierarchyLink.getId()),
+                  hierarchyLink.getId(),
+                  hierarchyLink.getName()), hierarchyLink.getInward(),
+              hierarchyLink.getOutward(),
+              "");
       return field;
     } else {
       throw new IllegalArgumentException(

@@ -254,6 +254,10 @@ public class HierarchyFieldAdminResource {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
+    //TODO: edit projects & issue types & jql statement
+    jaeCustomFieldManager.editHierarchyField(field,
+        new HierarchyFieldConfigEditBean(bean, field.getIdAsLong()));
+
     jaeCustomFieldManager.editHierarchyFieldConfigurationContext(
         field, bean);
 
@@ -266,16 +270,8 @@ public class HierarchyFieldAdminResource {
 
     return Response.ok(transactionTemplate.execute(new TransactionCallback() {
       public Object doInTransaction() {
-        HierarchyFieldSettings hierarchyFieldSettings = hierarchyFieldSettingsService
-            .addFieldSettings(field.getIdAsLong(),
-                new CustomFieldBean(field.getId(), field.getIdAsLong(), field.getName()),
-                bean.getIssueTypes(),
-                bean.getProjects(),
-                new IssueLinkBean(String.valueOf(hierarchyLinkType.getId()),
-                    hierarchyLinkType.getId(),
-                    hierarchyLinkType.getName()), bean.getInwardLink(),
-                bean.getOutwardLink(),
-                bean.getJqlStatement());
+        HierarchyFieldSettings hierarchyFieldSettings =
+            hierarchyFieldSettingsService.getFieldSettings(field.getIdAsLong());
         return createJsonBean(field.getIdAsLong(), hierarchyFieldSettings);
       }
     })).build();
@@ -355,6 +351,18 @@ public class HierarchyFieldAdminResource {
     private String outwardLink;
     @JsonProperty
     private String jqlStatement;
+
+    public HierarchyFieldConfigEditBean(
+        HierarchyFieldConfigCreateBean hierarchyFieldConfigCreateBean, Long id) {
+      this.id = String.valueOf(id);
+      this.customField = new CustomFieldBean(String.valueOf(id), id,
+          hierarchyFieldConfigCreateBean.getCustomFieldName());
+      this.issueTypes = hierarchyFieldConfigCreateBean.getIssueTypes();
+      this.projects = hierarchyFieldConfigCreateBean.getProjects();
+      this.inwardLink = hierarchyFieldConfigCreateBean.getInwardLink();
+      this.outwardLink = hierarchyFieldConfigCreateBean.getOutwardLink();
+      this.jqlStatement = hierarchyFieldConfigCreateBean.getJqlStatement();
+    }
   }
 
   @NoArgsConstructor
@@ -376,5 +384,15 @@ public class HierarchyFieldAdminResource {
     private String outwardLink;
     @JsonProperty
     private String jqlStatement;
+
+    public HierarchyFieldConfigCreateBean(
+        HierarchyFieldConfigEditBean hierarchyFieldConfigEditBean) {
+      this.customFieldName = hierarchyFieldConfigEditBean.getCustomField().getName();
+      this.issueTypes = hierarchyFieldConfigEditBean.getIssueTypes();
+      this.projects = hierarchyFieldConfigEditBean.getProjects();
+      this.inwardLink = hierarchyFieldConfigEditBean.getInwardLink();
+      this.outwardLink = hierarchyFieldConfigEditBean.getOutwardLink();
+      this.jqlStatement = hierarchyFieldConfigEditBean.getJqlStatement();
+    }
   }
 }

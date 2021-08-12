@@ -21,6 +21,7 @@
 package it.uk.co.mattwhitaker.atlassian.jiraserveragileextended.ui;
 
 import it.uk.co.mattwhitaker.atlassian.jiraserveragileextended.admin.BacklogAdminServletUITest;
+import it.uk.co.mattwhitaker.atlassian.jiraserveragileextended.admin.HierarchyAdminServletUITest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -29,9 +30,10 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        Bootstrap.class,
-        RedirectToLoginTest.class,
-        BacklogAdminServletUITest.class
+    Bootstrap.class,
+    RedirectToLoginTest.class,
+    HierarchyAdminServletUITest.class,
+    BacklogAdminServletUITest.class
 })
 public class UiTestSuite {
 }

@@ -9,13 +9,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.atlassian.jira.JiraDataTypes;
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueFactory;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.MutableIssue;
-import com.atlassian.jira.issue.link.IssueLinkManager;
 import com.atlassian.jira.jql.operand.QueryLiteral;
 import com.atlassian.jira.plugin.jql.function.JqlFunctionModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
